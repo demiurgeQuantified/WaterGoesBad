@@ -1,0 +1,67 @@
+VERSION = 1,
+
+option WaterGoesBad.ExpirationMin
+{
+	type = integer,
+	max = 365,
+    min = 0,
+	default = 2,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_ExpirationMin,
+}
+
+option WaterGoesBad.ExpirationMax
+{
+	type = integer,
+	max = 365,
+    min = 0,
+	default = 7,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_ExpirationMax,
+}
+
+option WaterGoesBad.ReduceWaterOverTime
+{
+	type = boolean,
+	default = false,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_ReduceWaterOverTime,
+}
+
+option WaterGoesBad.WaterReductionRate
+{
+	type = integer,
+	max = 20,
+    min = 1,
+	default = 1,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_WaterReductionRate,
+}
+
+option WaterGoesBad.WaterReductionChance
+{
+	type = integer,
+	max = 100,
+    min = 1,
+	default = 90,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_WaterReductionChance,
+}
+
+option WaterGoesBad.MinimumWaterLeft
+{
+	type = integer,
+	max = 99,
+    min = 0,
+	default = 2,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_MinimumWaterLeft,
+}
+
+option WaterGoesBad.ScaleWaterLoss
+{
+	type = boolean,
+	default = true,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_ScaleWaterLoss,
+}
