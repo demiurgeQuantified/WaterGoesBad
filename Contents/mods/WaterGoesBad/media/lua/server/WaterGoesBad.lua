@@ -17,21 +17,22 @@
 ]]
 if isClient() then return end
 
-local expirationDate = nil
+local WaterGoesBad = {}
+WaterGoesBad.expirationDate = nil
 
-local function getDaysSinceExpiration()
+function WaterGoesBad.getDaysSinceExpiration()
     local daysSurvived = getGameTime():getWorldAgeHours() / 24
     daysSurvived = math.floor(daysSurvived + 0.5)
-    return daysSurvived - expirationDate
+    return daysSurvived - WaterGoesBad.expirationDate
 end
 
-local function IsValidContainer(object)
+function WaterGoesBad.IsValidContainer(object)
     return object:hasWater() and object:getProperties():Is(IsoFlagType.waterPiped) and (not object:getUsesExternalWaterSource())
 end
 
-local function ReduceWater(object)
+function WaterGoesBad.ReduceWater(object)
     local daysSimulated = object:getModData()['WGBDaysSimulated'] or 0
-    local daysNotSimulated = (getDaysSinceExpiration() + 1) - daysSimulated
+    local daysNotSimulated = (WaterGoesBad.getDaysSinceExpiration() + 1) - daysSimulated
 
     local daysToSimulate = 0
     if daysNotSimulated > 0 then
@@ -56,44 +57,49 @@ local function ReduceWater(object)
         end
     end
     
-    object:getModData()['WGBDaysSimulated'] = getDaysSinceExpiration() + 1
+    object:getModData()['WGBDaysSimulated'] = WaterGoesBad.getDaysSinceExpiration() + 1
 end
 
-local function TaintWater(square)
+function WaterGoesBad.TaintWater(square)
     local objectArray = square:getObjects()
     for i = 0, objectArray:size() - 1 do
         local object = objectArray:get(i)
-        if IsValidContainer(object) then
+        if WaterGoesBad.IsValidContainer(object) then
             object:setTaintedWater(true)
             if SandboxVars.WaterGoesBad.ReduceWaterOverTime and object:getWaterAmount() > SandboxVars.WaterGoesBad.MinimumWaterLeft then
-                ReduceWater(object)
+                WaterGoesBad.ReduceWater(object)
             end
         end
     end
 end
 
-local function EveryDays()
-    if getDaysSinceExpiration() >= 0 then
-        Events.LoadGridsquare.Add(TaintWater)
-        Events.EveryDays.Remove(EveryDays)
+function WaterGoesBad.EveryDays()
+    if WaterGoesBad.getDaysSinceExpiration() >= 0 then
+        Events.LoadGridsquare.Add(WaterGoesBad.TaintWater)
+        Events.EveryDays.Remove(WaterGoesBad.EveryDays)
     end
 end
 
-local function CalculateExpirationDate()
-    if ModData.exists(WaterGoesBad) then
-        expirationDate = ModData.get(WaterGoesBad)['ExpirationDate']
+function WaterGoesBad.CalculateExpirationDate()
+    if ModData.exists('WaterGoesBad') then
+        WaterGoesBad.expirationDate = ModData.get('WaterGoesBad')['ExpirationDate']
     else
+        local expirationDate
         if SandboxVars.WaterGoesBad.ExpirationMax > SandboxVars.WaterGoesBad.ExpirationMin then
             expirationDate = ZombRand(SandboxVars.WaterGoesBad.ExpirationMin, SandboxVars.WaterGoesBad.ExpirationMax + 1)
         else
             expirationDate = SandboxVars.WaterGoesBad.ExpirationMin
         end
         expirationDate = expirationDate + math.max(SandboxVars.WaterShutModifier, 0)
-        local modData = {['ExpirationDate'] = expirationDate}
-        ModData.create(WaterGoesBad)
-        ModData.add(WaterGoesBad, modData)
+        WaterGoesBad.expirationDate = expirationDate
+        ModData.create('WaterGoesBad')
+        ModData.add('WaterGoesBad', {['ExpirationDate'] = expirationDate})
     end
     if getDaysSinceExpiration() >= 0 then Events.LoadGridsquare.Add(TaintWater) else Events.EveryDays.Add(EveryDays) end
 end
 
-Events.OnInitGlobalModData.Add(CalculateExpirationDate)
+Events.OnInitGlobalModData.Add(WaterGoesBad.CalculateExpirationDate)
+
+WaterGoesBad.Commands = require 'WGB_ClientCommands'
+
+return WaterGoesBad

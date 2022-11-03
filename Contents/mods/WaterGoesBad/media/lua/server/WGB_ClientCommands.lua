@@ -17,7 +17,9 @@
 ]]
 if isClient() then return end
 
-function WGB_plumbObject(args)
+local Commands = {}
+
+function Commands.plumbObject(args)
     local sq = getCell():getGridSquare(args.x, args.y, args.z)
     if sq and args.index >= 0 and args.index < sq:getObjects():size() then
         local object = sq:getObjects():get(args.index)
@@ -27,9 +29,11 @@ function WGB_plumbObject(args)
 end
 
 local function onClientCommand(module, command, player, args)
-    if module == 'object' and command == 'plumbObject' then -- this is a silly way of doing things, but i don't think this mod will need another command ever
-        WGB_plumbObject(args)
+    if module == 'object' and command == 'plumbObject' then
+        Commands.plumbObject(args)
     end
 end
 
 Events.OnClientCommand.Add(onClientCommand)
+
+return Commands
