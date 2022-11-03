@@ -23,7 +23,11 @@ function Commands.plumbObject(args)
     local sq = getCell():getGridSquare(args.x, args.y, args.z)
     if sq and args.index >= 0 and args.index < sq:getObjects():size() then
         local object = sq:getObjects():get(args.index)
-        object:setTaintedWater(false)
+        if not SandboxVars.WaterGoesBad.NeedFilterWater or object:getModData().hasFilter then
+            object:setTaintedWater(false)
+        else
+            object:setTaintedWater(object:doFindExternalWaterSource():isTaintedWater())
+        end
         object:transmitCompleteItemToClients()
     end
 end

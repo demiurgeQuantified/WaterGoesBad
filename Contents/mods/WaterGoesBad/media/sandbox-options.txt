@@ -20,6 +20,14 @@ option WaterGoesBad.ExpirationMax
 	translation = WaterGoesBad_ExpirationMax,
 }
 
+option WaterGoesBad.NeedFilterWater
+{
+	type = boolean,
+	default = true,
+	page = WaterGoesBad,
+	translation = WaterGoesBad_NeedFilterWater,
+}
+
 option WaterGoesBad.ReduceWaterOverTime
 {
 	type = boolean,
