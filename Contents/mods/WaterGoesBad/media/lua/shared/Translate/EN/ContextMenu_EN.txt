@@ -1,0 +1,3 @@
+ContextMenu_EN = {
+    ContextMenu_AddFilter = "Add Filter to %1",
+}

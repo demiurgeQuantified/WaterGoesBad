@@ -101,5 +101,6 @@ end
 Events.OnInitGlobalModData.Add(WaterGoesBad.CalculateExpirationDate)
 
 WaterGoesBad.Commands = require 'WGB_ClientCommands'
+WaterGoesBad.ContextMenu = require 'WGB_ContextMenu'
 
 return WaterGoesBad
