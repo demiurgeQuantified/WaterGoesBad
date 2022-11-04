@@ -1,11 +1,2 @@
-if isClient() then return end
-
-local old_stateToIsoObject = SRainBarrelGlobalObject.stateToIsoObject
-
-function SRainBarrelGlobalObject:stateToIsoObject(isoObject)
-	local shouldTaint = self.taintedWater
-	old_stateToIsoObject(self, isoObject)
-	if shouldTaint ~= nil then
-		isoObject:setTaintedWater(shouldTaint)
-	end
-end
+-- need to blank this file or the old one may not be deleted
+return
