@@ -27,7 +27,7 @@ function WaterGoesBad.getDaysSinceExpiration()
 end
 
 function WaterGoesBad.IsValidContainer(object)
-    return object:hasWater() and object:getProperties():Is(IsoFlagType.waterPiped) and (not object:getUsesExternalWaterSource())
+    return object:hasWater() and object:getProperties():Is(IsoFlagType.waterPiped) and not object:getUsesExternalWaterSource()
 end
 
 function WaterGoesBad.ReduceWater(object)

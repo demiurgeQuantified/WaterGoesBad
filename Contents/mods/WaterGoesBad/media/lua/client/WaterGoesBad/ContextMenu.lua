@@ -32,16 +32,17 @@ end
 function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects, test)
 	local playerObj = getSpecificPlayer(player)
 	for _,object in ipairs(worldObjects) do
-		if not ContextMenu.isFilterable(object) then return end
-		local name = getMoveableDisplayName(object) or ''
-		local option = context:addOption(getText('ContextMenu_AddFilter', name), worldObjects, ContextMenu.onAddFilter, player, object)
-		if not playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken) then
-			option.notAvailable = true
-			local tooltip = ISWorldObjectContextMenu.addToolTip()
-			tooltip:setName(getText('ContextMenu_AddFilter', name))
-			local usedItem = InventoryItemFactory.CreateItem('Base.PipeWrench')
-			tooltip.description = getText('Tooltip_NeedWrench', usedItem:getName())
-			option.toolTip = tooltip
+		if ContextMenu.isFilterable(object) then
+			local name = getMoveableDisplayName(object) or ''
+			local option = context:addOption(getText('ContextMenu_AddFilter', name), worldObjects, ContextMenu.onAddFilter, player, object)
+			if not playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken) then
+				option.notAvailable = true
+				local tooltip = ISWorldObjectContextMenu.addToolTip()
+				tooltip:setName(getText('ContextMenu_AddFilter', name))
+				local usedItem = InventoryItemFactory.CreateItem('Base.PipeWrench')
+				tooltip.description = getText('Tooltip_NeedWrench', usedItem:getName())
+				option.toolTip = tooltip
+			end
 		end
 	end
 end

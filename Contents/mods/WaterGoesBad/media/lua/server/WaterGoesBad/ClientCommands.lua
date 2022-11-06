@@ -23,11 +23,17 @@ function Commands.plumbObject(args)
     local sq = getCell():getGridSquare(args.x, args.y, args.z)
     if sq and args.index >= 0 and args.index < sq:getObjects():size() then
         local object = sq:getObjects():get(args.index)
-        if not SandboxVars.WaterGoesBad.NeedFilterWater or object:getModData().hasFilter then
-            object:setTaintedWater(false)
-        else
-            object:setTaintedWater(object:doFindExternalWaterSource():isTaintedWater())
-        end
+        object:setTaintedWater(IsoObject.FindExternalWaterSource(object:getSquare()):isTaintedWater())
+        object:transmitCompleteItemToClients()
+    end
+end
+
+function Commands.addFilter(args)
+    local sq = getCell():getGridSquare(args.x, args.y, args.z)
+    if sq and args.index >= 0 and args.index < sq:getObjects():size() then
+        local object = sq:getObjects():get(args.index)
+        object:getModData().hasFilter = true
+        object:setTaintedWater(false)
         object:transmitCompleteItemToClients()
     end
 end
@@ -36,6 +42,8 @@ local function onClientCommand(module, command, player, args)
     if module == 'object' and command == 'plumbObject' then
         Commands.plumbObject(args)
     end
+    if module ~= 'WaterGoesBad' then return end
+    Commands[command](args)
 end
 
 Events.OnClientCommand.Add(onClientCommand)
