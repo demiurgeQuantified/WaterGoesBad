@@ -7,5 +7,6 @@ function SRainBarrelGlobalObject:stateToIsoObject(isoObject)
 	old_stateToIsoObject(self, isoObject)
 	if shouldTaint ~= nil then
 		isoObject:setTaintedWater(shouldTaint)
+		self.taintedWater = shouldTaint
 	end
 end
