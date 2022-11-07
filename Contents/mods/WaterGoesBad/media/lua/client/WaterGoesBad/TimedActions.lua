@@ -1,16 +1,18 @@
-ISAddTapFilter = ISPlumbItem:derive("ISAddTapFilter")
+local TimedActions = {}
 
-function ISAddTapFilter:new(character, itemToPipe, wrench, time)
+TimedActions.ISAddTapFilter = ISPlumbItem:derive("ISAddTapFilter")
+
+function TimedActions.ISAddTapFilter:new(character, itemToPipe, wrench, time)
 	local o = ISPlumbItem.new(self, character, itemToPipe, wrench, time)
 	o.modData = o.itemToPipe:getModData()
 	return o
 end
 
-function ISAddTapFilter:isValid()
+function TimedActions.ISAddTapFilter:isValid()
 	return not self.modData.hasFilter and ISPlumbItem.isValid(self)
 end
 
-function ISAddTapFilter:perform()
+function TimedActions.ISAddTapFilter:perform()
 	self.character:stopOrTriggerSound(self.sound)
 	local obj = self.itemToPipe
 	local args = { x=obj:getX(), y=obj:getY(), z=obj:getZ(), index=obj:getObjectIndex(), hasFilter = true }
@@ -22,13 +24,13 @@ function ISAddTapFilter:perform()
 	ISBaseTimedAction.perform(self)
 end
 
-ISRemoveTapFilter = ISAddTapFilter:derive("ISRemoveTapFilter")
+TimedActions.ISRemoveTapFilter = TimedActions.ISAddTapFilter:derive("ISRemoveTapFilter")
 
-function ISRemoveTapFilter:isValid()
+function TimedActions.ISRemoveTapFilter:isValid()
 	return self.modData.hasFilter and ISPlumbItem.isValid(self)
 end
 
-function ISRemoveTapFilter:perform()
+function TimedActions.ISRemoveTapFilter:perform()
 	self.character:stopOrTriggerSound(self.sound)
 	local obj = self.itemToPipe
 	local args = { x=obj:getX(), y=obj:getY(), z=obj:getZ(), index=obj:getObjectIndex(), hasFilter = false }
@@ -39,3 +41,5 @@ function ISRemoveTapFilter:perform()
 	-- needed to remove from queue / start next.
 	ISBaseTimedAction.perform(self)
 end
+
+return TimedActions

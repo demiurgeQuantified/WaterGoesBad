@@ -1,4 +1,5 @@
 local ContextMenu = {}
+local TimedActions = require 'WaterGoesBad/TimedActions'
 
 local function predicateNotBroken(item)
 	return not item:isBroken()
@@ -23,8 +24,8 @@ function ContextMenu.onFilterAction(worldobjects, player, itemToPipe, hasFilter)
 	local wrench = playerObj:getInventory():getFirstTypeEvalRecurse('PipeWrench', predicateNotBroken);
 	ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), wrench, true)
 
-	local timedAction = ISAddTapFilter
-	if hasFilter then timedAction = ISRemoveTapFilter end
+	local timedAction = TimedActions.ISAddTapFilter
+	if hasFilter then timedAction = TimedActions.ISRemoveTapFilter end
 
 	ISTimedActionQueue.add(timedAction:new(playerObj, itemToPipe, wrench, 100));
 end
@@ -42,7 +43,7 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 			local name = getMoveableDisplayName(object) or ''
 			local translation = 'ContextMenu_AddFilter'
 			if hasFilter then translation = 'ContextMenu_RemoveFilter' end
-			
+
 			local option = context:addOption(getText(translation, name), worldObjects, ContextMenu.onFilterAction, player, object, hasFilter)
 
 			if not playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken) then
