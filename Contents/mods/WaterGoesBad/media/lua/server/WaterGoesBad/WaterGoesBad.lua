@@ -20,16 +20,20 @@ if isClient() then return end
 local WaterGoesBad = {}
 WaterGoesBad.expirationDate = nil
 
+---@return integer
 function WaterGoesBad.getDaysSinceExpiration()
     local daysSurvived = getGameTime():getWorldAgeHours() / 24
     daysSurvived = math.floor(daysSurvived + 0.5)
     return daysSurvived - WaterGoesBad.expirationDate
 end
 
+---@param object IsoObject
 function WaterGoesBad.IsValidContainer(object)
     return object:hasWater() and object:getProperties():Is(IsoFlagType.waterPiped) and not object:getUsesExternalWaterSource()
 end
 
+---Simulates the reduction of water for every day since the water started draining that this object has not been loaded
+---@param object IsoObject
 function WaterGoesBad.ReduceWater(object)
     local daysSimulated = object:getModData()['WGBDaysSimulated'] or 0
     local daysNotSimulated = (WaterGoesBad.getDaysSinceExpiration() + 1) - daysSimulated
@@ -60,6 +64,8 @@ function WaterGoesBad.ReduceWater(object)
     object:getModData()['WGBDaysSimulated'] = WaterGoesBad.getDaysSinceExpiration() + 1
 end
 
+---Taints the water in an object, if it is valid, and simulated the water reduction, if enabled
+---@param square IsoGridSquare
 function WaterGoesBad.TaintWater(square)
     local objectArray = square:getObjects()
     for i = 0, objectArray:size() - 1 do

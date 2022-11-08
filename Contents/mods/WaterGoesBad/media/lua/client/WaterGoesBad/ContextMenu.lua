@@ -19,6 +19,9 @@ local function getMoveableDisplayName(obj)
 	return nil
 end
 
+---@param player number
+---@param itemToPipe IsoObject
+---@param hasFilter boolean
 function ContextMenu.onFilterAction(worldobjects, player, itemToPipe, hasFilter)
 	local playerObj = getSpecificPlayer(player)
 	local wrench = playerObj:getInventory():getFirstTypeEvalRecurse('PipeWrench', predicateNotBroken);
@@ -30,6 +33,7 @@ function ContextMenu.onFilterAction(worldobjects, player, itemToPipe, hasFilter)
 	ISTimedActionQueue.add(timedAction:new(playerObj, itemToPipe, wrench, 100));
 end
 
+---@param object IsoObject
 function ContextMenu.isFilterable(object)
 	return object:getProperties():Is(IsoFlagType.waterPiped) and object:getUsesExternalWaterSource()
 end
