@@ -43,8 +43,8 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 			local playerHasFilter = playerObj:getInventory():containsType('WaterGoesBad.TapFilter')
 			local playerHasWrench = playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken)
 			if not (playerHasFilter or playerHasWrench) then return end
-			local hasFilter = object:getModData().hasFilter
 
+			local hasFilter = object:getModData().hasFilter
 			local name = getMoveableDisplayName(object) or ''
 			local translation = 'ContextMenu_AddFilter'
 			if hasFilter then translation = 'ContextMenu_RemoveFilter' end

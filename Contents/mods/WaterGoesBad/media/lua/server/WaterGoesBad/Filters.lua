@@ -56,8 +56,4 @@ function Filters.OnWaterAmountChange(object)
     end
 end
 
-if SandboxVars.WaterGoesBad.NeedFilterWater then
-    Events.OnWaterAmountChange.Add(Filters.OnWaterAmountChange)
-end
-
 return Filters

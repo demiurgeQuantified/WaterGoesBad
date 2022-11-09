@@ -102,6 +102,9 @@ function WaterGoesBad.CalculateExpirationDate()
         ModData.add('WaterGoesBad', {['ExpirationDate'] = expirationDate})
     end
     if WaterGoesBad.getDaysSinceExpiration() >= 0 then Events.LoadGridsquare.Add(WaterGoesBad.TaintWater) else Events.EveryDays.Add(WaterGoesBad.EveryDays) end
+    if SandboxVars.WaterGoesBad.NeedFilterWater then
+        Events.OnWaterAmountChange.Add(WaterGoesBad.Filters.OnWaterAmountChange)
+    end
 end
 
 Events.OnInitGlobalModData.Add(WaterGoesBad.CalculateExpirationDate)
