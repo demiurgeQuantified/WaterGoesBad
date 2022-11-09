@@ -40,6 +40,9 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 	local playerObj = getSpecificPlayer(player)
 	for _,object in ipairs(worldObjects) do
 		if ContextMenu.isFilterable(object) then
+			local playerHasFilter = playerObj:getInventory():containsType('WaterGoesBad.TapFilter')
+			local playerHasWrench = playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken)
+			if not (playerHasFilter or playerHasWrench) then return end
 			local hasFilter = object:getModData().hasFilter
 
 			local name = getMoveableDisplayName(object) or ''
@@ -49,12 +52,12 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 			local option = context:addOption(getText(translation, name), object, ContextMenu.onFilterAction, player, not hasFilter)
 
 			local tooltip = nil
-			if not (hasFilter or playerObj:getInventory():containsType('WaterGoesBad.TapFilter')) then
+			if not (hasFilter or playerHasFilter) then
 				tooltip = ISWorldObjectContextMenu.addToolTip()
 				tooltip:setName(getText('ContextMenu_AddFilter', name))
 				local usedItem = InventoryItemFactory.CreateItem('WaterGoesBad.TapFilter')
 				tooltip.description = getText('Tooltip_NeedWrench', usedItem:getName())
-			elseif not playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken) then
+			elseif not playerHasWrench then
 				tooltip = ISWorldObjectContextMenu.addToolTip()
 				tooltip:setName(getText('ContextMenu_AddFilter', name))
 				local usedItem = InventoryItemFactory.CreateItem('Base.PipeWrench')
