@@ -1,21 +1,22 @@
 local TimedActions = {}
 
-TimedActions.ISAddTapFilter = ISPlumbItem:derive("ISAddTapFilter")
+TimedActions.ISChangeTapFilter = ISPlumbItem:derive("ISChangeTapFilter")
 
-function TimedActions.ISAddTapFilter:new(character, itemToPipe, wrench, time)
+function TimedActions.ISChangeTapFilter:new(character, itemToPipe, wrench, isAddFilter, time)
 	local o = ISPlumbItem.new(self, character, itemToPipe, wrench, time)
 	o.modData = o.itemToPipe:getModData()
+	o.isAddFilter = isAddFilter
 	return o
 end
 
-function TimedActions.ISAddTapFilter:isValid()
-	return not self.modData.hasFilter and ISPlumbItem.isValid(self)
+function TimedActions.ISChangeTapFilter:isValid()
+	return (self.modData.hasFilter == self.isAddFilter) and ISPlumbItem.isValid(self)
 end
 
-function TimedActions.ISAddTapFilter:perform()
+function TimedActions.ISChangeTapFilter:perform()
 	self.character:stopOrTriggerSound(self.sound)
 	local obj = self.itemToPipe
-	local args = { x=obj:getX(), y=obj:getY(), z=obj:getZ(), index=obj:getObjectIndex(), hasFilter = true }
+	local args = { x=obj:getX(), y=obj:getY(), z=obj:getZ(), index=obj:getObjectIndex(), self.isAddFilter }
 	sendClientCommand(self.character, 'WaterGoesBad', 'changeFilter', args)
 
 	buildUtil.setHaveConstruction(obj:getSquare(), true)
@@ -23,23 +24,3 @@ function TimedActions.ISAddTapFilter:perform()
 	-- needed to remove from queue / start next.
 	ISBaseTimedAction.perform(self)
 end
-
-TimedActions.ISRemoveTapFilter = TimedActions.ISAddTapFilter:derive("ISRemoveTapFilter")
-
-function TimedActions.ISRemoveTapFilter:isValid()
-	return self.modData.hasFilter and ISPlumbItem.isValid(self)
-end
-
-function TimedActions.ISRemoveTapFilter:perform()
-	self.character:stopOrTriggerSound(self.sound)
-	local obj = self.itemToPipe
-	local args = { x=obj:getX(), y=obj:getY(), z=obj:getZ(), index=obj:getObjectIndex(), hasFilter = false }
-	sendClientCommand(self.character, 'WaterGoesBad', 'changeFilter', args)
-
-	buildUtil.setHaveConstruction(obj:getSquare(), true)
-
-	-- needed to remove from queue / start next.
-	ISBaseTimedAction.perform(self)
-end
-
-return TimedActions

@@ -19,18 +19,15 @@ local function getMoveableDisplayName(obj)
 	return nil
 end
 
----@param player number
 ---@param itemToPipe IsoObject
----@param hasFilter boolean
-function ContextMenu.onFilterAction(worldobjects, player, itemToPipe, hasFilter)
+---@param player number
+---@param isAddFilter boolean
+function ContextMenu.onFilterAction(itemToPipe, player, isAddFilter)
 	local playerObj = getSpecificPlayer(player)
 	local wrench = playerObj:getInventory():getFirstTypeEvalRecurse('PipeWrench', predicateNotBroken);
 	ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), wrench, true)
 
-	local timedAction = TimedActions.ISAddTapFilter
-	if hasFilter then timedAction = TimedActions.ISRemoveTapFilter end
-
-	ISTimedActionQueue.add(timedAction:new(playerObj, itemToPipe, wrench, 100));
+	ISTimedActionQueue.add(TimedActions.ISChangeTapFilter:new(playerObj, itemToPipe, wrench, isAddFilter, 100));
 end
 
 ---@param object IsoObject
@@ -48,7 +45,7 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 			local translation = 'ContextMenu_AddFilter'
 			if hasFilter then translation = 'ContextMenu_RemoveFilter' end
 
-			local option = context:addOption(getText(translation, name), worldObjects, ContextMenu.onFilterAction, player, object, hasFilter)
+			local option = context:addOption(getText(translation, name), object, ContextMenu.onFilterAction, player, not hasFilter)
 
 			if not playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken) then
 				option.notAvailable = true
