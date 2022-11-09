@@ -24,10 +24,11 @@ end
 ---@param isAddFilter boolean
 function ContextMenu.onFilterAction(itemToPipe, player, isAddFilter)
 	local playerObj = getSpecificPlayer(player)
-	local wrench = playerObj:getInventory():getFirstTypeEvalRecurse('PipeWrench', predicateNotBroken);
+
+	local wrench = playerObj:getInventory():getFirstTypeEvalRecurse('PipeWrench', predicateNotBroken)
 	ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), wrench, true)
 
-	ISTimedActionQueue.add(TimedActions.ISChangeTapFilter:new(playerObj, itemToPipe, wrench, isAddFilter, 100));
+	ISTimedActionQueue.add(TimedActions.ISChangeTapFilter:new(playerObj, itemToPipe, wrench, isAddFilter, 100))
 end
 
 ---@param object IsoObject
@@ -47,12 +48,18 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 
 			local option = context:addOption(getText(translation, name), object, ContextMenu.onFilterAction, player, not hasFilter)
 
-			if not playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken) then
-				option.notAvailable = true
-				local tooltip = ISWorldObjectContextMenu.addToolTip()
+			local tooltip = nil
+			if not playerObj:getInventory():containsType('WaterGoesBad.TapFilter') then
+				tooltip = ISWorldObjectContextMenu.addToolTip()
 				tooltip:setName(getText('ContextMenu_AddFilter', name))
-				local usedItem = InventoryItemFactory.CreateItem('Base.PipeWrench')
-				tooltip.description = getText('Tooltip_NeedWrench', usedItem:getName())
+				tooltip.description = getText('Tooltip_NeedWrench', getText('ItemName_WaterGoesBad.TapFilter'))
+			elseif not playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken) then
+				tooltip = ISWorldObjectContextMenu.addToolTip()
+				tooltip:setName(getText('ContextMenu_AddFilter', name))
+				tooltip.description = getText('Tooltip_NeedWrench', getText('ItemName_Base.PipeWrench'))
+			end
+			if tooltip then
+				option.notAvailable = true
 				option.toolTip = tooltip
 			end
 		end

@@ -1,0 +1,11 @@
+module WaterGoesBad
+{
+    item TapFilter
+    {
+        DisplayCategory = Water,
+        Weight = 0.1,
+        Type = Normal,
+        DisplayName = Tap Filter,
+        Icon = Filter,
+    }
+}

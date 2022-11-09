@@ -18,6 +18,12 @@ function TimedActions.ISChangeTapFilter:perform()
 	local obj = self.itemToPipe
 	local args = { x=obj:getX(), y=obj:getY(), z=obj:getZ(), index=obj:getObjectIndex(), self.isAddFilter }
 	sendClientCommand(self.character, 'WaterGoesBad', 'changeFilter', args)
+	
+	if self.isAddFilter then
+		self.character:getInventory():RemoveOneOf('WaterGoesBad.TapFilter')
+	else
+		self.character:getInventory():AddItem('WaterGoesBad.TapFilter')
+	end
 
 	buildUtil.setHaveConstruction(obj:getSquare(), true)
 
