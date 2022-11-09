@@ -68,6 +68,4 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 	end
 end
 
-Events.OnFillWorldObjectContextMenu.Add(ContextMenu.OnFillWorldObjectContextMenu)
-
 return ContextMenu
