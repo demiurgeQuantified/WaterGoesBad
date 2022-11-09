@@ -31,9 +31,9 @@ function Commands.changeFilter(args)
     local sq = getCell():getGridSquare(args.x, args.y, args.z)
     if sq and args.index >= 0 and args.index < sq:getObjects():size() then
         local object = sq:getObjects():get(args.index)
-        object:getModData().hasFilter = args.hasFilter
+        object:getModData().hasFilter = args.addFilter
         object:transmitModData()
-        if args.hasFilter then
+        if args.addFilter then
             object:setTaintedWater(false)
         else
             object:setTaintedWater(IsoObject.FindExternalWaterSource(object:getSquare()):isTaintedWater())
