@@ -17,7 +17,7 @@ function TimedActions.ISChangeTapFilter:perform()
 	self.character:stopOrTriggerSound(self.sound)
 	local obj = self.itemToPipe
 	local args = { x=obj:getX(), y=obj:getY(), z=obj:getZ(), index=obj:getObjectIndex(), addFilter=self.isAddFilter }
-	sendClientCommand(self.character, 'WaterGoesBad', 'changeFilter', args)
+	sendClientCommand(self.character, 'WaterGoesBad.Filters', 'changeFilter', args)
 	
 	if self.isAddFilter then
 		self.character:getInventory():RemoveOneOf('WaterGoesBad.TapFilter')

@@ -19,6 +19,7 @@ if isClient() then return end
 
 local WaterGoesBad = {}
 WaterGoesBad.expirationDate = nil
+WaterGoesBad.Filters = require 'WaterGoesBad/Filters'
 
 ---@return integer
 function WaterGoesBad.getDaysSinceExpiration()
@@ -98,18 +99,36 @@ function WaterGoesBad.CalculateExpirationDate()
         end
         expirationDate = expirationDate + math.max(SandboxVars.WaterShutModifier, 0)
         WaterGoesBad.expirationDate = expirationDate
-        ModData.create('WaterGoesBad')
         ModData.add('WaterGoesBad', {['ExpirationDate'] = expirationDate})
     end
     if WaterGoesBad.getDaysSinceExpiration() >= 0 then Events.LoadGridsquare.Add(WaterGoesBad.TaintWater) else Events.EveryDays.Add(WaterGoesBad.EveryDays) end
-    if SandboxVars.WaterGoesBad.NeedFilterWater then
-        Events.OnWaterAmountChange.Add(WaterGoesBad.Filters.OnWaterAmountChange)
-    end
 end
 
 Events.OnInitGlobalModData.Add(WaterGoesBad.CalculateExpirationDate)
 
-WaterGoesBad.Commands = require 'ClientCommands'
-WaterGoesBad.Filters = require 'Filters'
+----------------------------------------------------------------------------------------------------------
+-- client commands
+----------------------------------------------------------------------------------------------------------
+
+WaterGoesBad.Commands = {}
+
+function WaterGoesBad.Commands.plumbObject(args)
+    local sq = getSquare(args.x, args.y, args.z)
+    if sq and args.index >= 0 and args.index < sq:getObjects():size() then
+        local object = sq:getObjects():get(args.index)
+        local tainted = IsoObject.FindExternalWaterSource(sq):isTaintedWater()
+        object:setTaintedWater(tainted)
+        args = {x=args.x, y=args.y, z=args.z, index=args.index, tainted=tainted}
+        sendServerCommand('WaterGoesBad', 'setTainted', args)
+    end
+end
+
+local function onClientCommand(module, command, player, args)
+    if module == 'object' and command == 'plumbObject' then
+        WaterGoesBad.Commands.plumbObject(args)
+    end
+end
+
+Events.OnClientCommand.Add(onClientCommand)
 
 return WaterGoesBad

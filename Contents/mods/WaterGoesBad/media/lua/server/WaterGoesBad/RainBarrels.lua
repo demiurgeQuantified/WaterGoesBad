@@ -1,6 +1,15 @@
 if isClient() then return end
 
 do
+	local old_loadIsoObject = SGlobalObjectSystem.loadIsoObject
+
+	function SGlobalObjectSystem:loadIsoObject(isoObject)
+		isoObject:addToWorld()
+		old_loadIsoObject(self, isoObject)
+	end
+end
+
+do
 	local old_stateToIsoObject = SRainBarrelGlobalObject.stateToIsoObject
 
 	function SRainBarrelGlobalObject:stateToIsoObject(isoObject)
