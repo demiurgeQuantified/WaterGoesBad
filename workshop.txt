@@ -1,11 +1,17 @@
 version=1
 id=2849467715
 title=Water Goes Bad
+description=[h1]Water Goes Bad[/h1]
 description=This mod makes the water still stored in sinks, baths, etc after the water shutoff become unsafe to drink after a customisable amount of time. Off-grid water containers, such as water dispensers, stored water containers, and player plumbed sinks are not affected.
+description=This aims to make keeping track of water more engaging, where in Vanilla stored-up water leaves a near infinite supply of easy safe water even after the water shutoff, making keeping up with thirst is little more than a nuisance.
+description=[h1]Water Drain[/h1]
+description=This mod also features water draining from the taps over time to add further urgency to securing a water source.
+description=[h1]Filters[/h1]
+description=This also introduces the need to filter plumbed taps. You'll need to additionally craft and install a filter after plumbing a tap, unless the source has safe water (not rain).
+description=[h1]Customisability[/h1]
+description=Sandbox variables allow you to customise how many days after the water shutoff the water becomes tainted (including instantly). The filters and water drain features can be turned off entirely, and the rate of drain can be changed.
 description=
-description=This mod is best used to add extra realism and challenge to singleplayer/co-op survival runs, where stored-up water leaves a near infinite supply of easy safe water even after the water shutoff. Some may find a challenge run with instantly shut-off and tainted water fun, too.
-description=
-description=Sandbox variables allow you to customise how many days after the water shutoff the water becomes tainted (including instantly). This mod also optionally features these water sources draining over time: the rate of this can be customised in depth.
+description=Water Goes Bad also fixes all major bugs relating to rain collector barrels - they won't freeze up or randomly become tainted anymore.
 description=
 description=If you enjoy my mods, I'd appreciate it a lot if you considered leaving me a tip ^u^
 description=[url=https://ko-fi.com/starseamstress][img]https://storage.ko-fi.com/cdn/brandasset/kofi_button_dark.png[/img][/url]

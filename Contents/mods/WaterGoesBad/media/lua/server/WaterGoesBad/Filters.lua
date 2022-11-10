@@ -57,8 +57,6 @@ function Filters.OnWaterAmountChange(object)
     end
 end
 
-Events.OnWaterAmountChange.Add(Filters.OnWaterAmountChange)
-
 ----------------------------------------------------------------------------------------------------------
 -- client commands
 ----------------------------------------------------------------------------------------------------------

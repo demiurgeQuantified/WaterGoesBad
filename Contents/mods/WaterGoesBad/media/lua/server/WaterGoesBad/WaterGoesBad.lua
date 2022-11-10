@@ -102,6 +102,10 @@ function WaterGoesBad.CalculateExpirationDate()
         ModData.add('WaterGoesBad', {['ExpirationDate'] = expirationDate})
     end
     if WaterGoesBad.getDaysSinceExpiration() >= 0 then Events.LoadGridsquare.Add(WaterGoesBad.TaintWater) else Events.EveryDays.Add(WaterGoesBad.EveryDays) end
+    Events.OnWaterAmountChange.Remove(WaterGoesBad.Filters.OnWaterAmountChange)
+    if SandboxVars.WaterGoesBad.NeedFilterWater then
+        Events.OnWaterAmountChange.Add(WaterGoesBad.Filters.OnWaterAmountChange)
+    end
 end
 
 Events.OnInitGlobalModData.Add(WaterGoesBad.CalculateExpirationDate)
@@ -116,7 +120,11 @@ function WaterGoesBad.Commands.plumbObject(args)
     local sq = getSquare(args.x, args.y, args.z)
     if sq and args.index >= 0 and args.index < sq:getObjects():size() then
         local object = sq:getObjects():get(args.index)
-        local tainted = IsoObject.FindExternalWaterSource(sq):isTaintedWater()
+
+        local tainted = false
+        if SandboxVars.WaterGoesBad.NeedFilterWater then
+            tainted = IsoObject.FindExternalWaterSource(sq):isTaintedWater()
+        end
         object:setTaintedWater(tainted)
         args = {x=args.x, y=args.y, z=args.z, index=args.index, tainted=tainted}
         sendServerCommand('WaterGoesBad', 'setTainted', args)
