@@ -43,7 +43,7 @@ end
 
 function Filters.OnWaterAmountChange(object)
 	if not object then return end
-	local luaObject = SRainBarrelSystem.instance:getLuaObjectAt(object:getX(), object:getY(), object:getZ())
+	local luaObject = SRainBarrelSystem.instance:getLuaObjectAt(object:getX(), object:getY(), object:getZ()) or SMetalDrumSystem.instance:getLuaObjectAt(object:getX(), object:getY(), object:getZ())
 	if luaObject then
         local tainted = object:isTaintedWater()
         local plumbedObjects = Filters.FindPlumbedObjects(object)

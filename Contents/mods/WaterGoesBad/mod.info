@@ -3,5 +3,5 @@ id=WaterGoesBad
 description=After the water shutoff, remaining water in sinks and other appliances will eventually become unsafe to drink, and securing a water source becomes more important than ever.
 poster=wgb.png
 authors=albion
-modversion=2.0.0
+modversion=2.0.1
 icon=wgbmini.png
