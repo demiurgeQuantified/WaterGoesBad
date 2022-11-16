@@ -1,13 +1,14 @@
 if isClient() then return end
 
-do
+-- global objects were fixed in 41.78, or something
+--[[do
 	local old_loadIsoObject = SGlobalObjectSystem.loadIsoObject
 
 	function SGlobalObjectSystem:loadIsoObject(isoObject)
 		isoObject:addToWorld()
 		old_loadIsoObject(self, isoObject)
 	end
-end
+end]]
 
 do
 	local old_stateToIsoObject = SRainBarrelGlobalObject.stateToIsoObject
