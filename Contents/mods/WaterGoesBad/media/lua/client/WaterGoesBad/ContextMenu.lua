@@ -54,12 +54,12 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 			local tooltip = nil
 			if not (hasFilter or playerHasFilter) then
 				tooltip = ISWorldObjectContextMenu.addToolTip()
-				tooltip:setName(getText('ContextMenu_AddFilter', name))
+				tooltip:setName(getText(translation, name))
 				local usedItem = InventoryItemFactory.CreateItem('WaterGoesBad.TapFilter')
 				tooltip.description = getText('Tooltip_NeedWrench', usedItem:getName())
 			elseif not playerHasWrench then
 				tooltip = ISWorldObjectContextMenu.addToolTip()
-				tooltip:setName(getText('ContextMenu_AddFilter', name))
+				tooltip:setName(getText(translation, name))
 				local usedItem = InventoryItemFactory.CreateItem('Base.PipeWrench')
 				tooltip.description = getText('Tooltip_NeedWrench', usedItem:getName())
 			end
