@@ -21,7 +21,7 @@ local WaterGoesBad = {}
 WaterGoesBad.expirationDate = nil
 WaterGoesBad.Filters = require 'WaterGoesBad/Filters'
 
----@return integer
+---@return number
 function WaterGoesBad.getDaysSinceExpiration()
     local daysSurvived = getGameTime():getWorldAgeHours() / 24
     daysSurvived = math.floor(daysSurvived + 0.5)
@@ -65,7 +65,7 @@ function WaterGoesBad.ReduceWater(object)
     object:getModData()['WGBDaysSimulated'] = WaterGoesBad.getDaysSinceExpiration() + 1
 end
 
----Taints the water in an object, if it is valid, and simulated the water reduction, if enabled
+---Taints the water in an object, if it is valid, and simulates the water reduction, if enabled
 ---@param square IsoGridSquare
 function WaterGoesBad.TaintWater(square)
     local objectArray = square:getObjects()
@@ -123,7 +123,7 @@ function WaterGoesBad.Commands.plumbObject(args)
 
         local tainted = false
         if SandboxVars.WaterGoesBad.NeedFilterWater then
-            tainted = IsoObject.FindExternalWaterSource(sq):isTaintedWater()
+            tainted = IsoObject.FindExternalWaterSource(sq) and IsoObject.FindExternalWaterSource(sq):isTaintedWater() or false
         end
         object:setTaintedWater(tainted)
         args = {x=args.x, y=args.y, z=args.z, index=args.index, tainted=tainted}
