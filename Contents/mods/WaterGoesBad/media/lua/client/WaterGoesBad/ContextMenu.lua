@@ -37,6 +37,8 @@ function ContextMenu.isFilterable(object)
 end
 
 function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects, test)
+	if not SandboxVars.WaterGoesBad.NeedFilterWater then return end
+	-- i'd prefer to instead not add the event at all when filters are disabled, but it was causing bugs
 	local playerObj = getSpecificPlayer(player)
 	for _,object in ipairs(worldObjects) do
 		if ContextMenu.isFilterable(object) then
@@ -68,5 +70,7 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 		end
 	end
 end
+
+Events.OnFillWorldObjectContextMenu.Add(ContextMenu.OnFillWorldObjectContextMenu)
 
 return ContextMenu

@@ -4,10 +4,7 @@ WaterGoesBad.TimedActions = require 'WaterGoesBad/TimedActions'
 WaterGoesBad.ContextMenu = require 'WaterGoesBad/ContextMenu'
 
 function WaterGoesBad.OnGameStart()
-    Events.OnFillWorldObjectContextMenu.Remove(WaterGoesBad.ContextMenu.OnFillWorldObjectContextMenu)
-    if SandboxVars.WaterGoesBad.NeedFilterWater then
-        Events.OnFillWorldObjectContextMenu.Add(WaterGoesBad.ContextMenu.OnFillWorldObjectContextMenu)
-    else
+    if not SandboxVars.WaterGoesBad.NeedFilterWater then
         getScriptManager():getRecipe('WaterGoesBad.Make Tap Filter'):setNeedToBeLearn(true)
     end
 end
