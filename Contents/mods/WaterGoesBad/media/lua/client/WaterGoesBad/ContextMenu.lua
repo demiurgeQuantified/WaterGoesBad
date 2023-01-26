@@ -25,7 +25,7 @@ end
 function ContextMenu.onFilterAction(itemToPipe, player, isAddFilter)
 	local playerObj = getSpecificPlayer(player)
 
-	local wrench = playerObj:getInventory():getFirstTypeEvalRecurse('PipeWrench', predicateNotBroken)
+	local wrench = playerObj:getInventory():getFirstTagEvalRecurse('PipeWrench', predicateNotBroken)
 	ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), wrench, true)
 
 	ISTimedActionQueue.add(TimedActions.ISChangeTapFilter:new(playerObj, itemToPipe, wrench, isAddFilter, 100))
@@ -43,7 +43,7 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 	for _,object in ipairs(worldObjects) do
 		if ContextMenu.isFilterable(object) then
 			local playerHasFilter = playerObj:getInventory():containsType('WaterGoesBad.TapFilter')
-			local playerHasWrench = playerObj:getInventory():containsTypeEvalRecurse('PipeWrench', predicateNotBroken)
+			local playerHasWrench = playerObj:getInventory():containsTagEvalRecurse('PipeWrench', predicateNotBroken)
 			if not (playerHasFilter or playerHasWrench) then return end
 
 			local hasFilter = object:getModData().hasFilter
