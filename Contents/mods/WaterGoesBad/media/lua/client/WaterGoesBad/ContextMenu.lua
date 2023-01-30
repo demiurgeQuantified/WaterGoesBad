@@ -33,7 +33,7 @@ end
 
 ---@param object IsoObject
 function ContextMenu.isFilterable(object)
-	return object:getProperties():Is(IsoFlagType.waterPiped) and object:getUsesExternalWaterSource()
+	return object:getProperties() and object:getProperties():Is(IsoFlagType.waterPiped) and object:getUsesExternalWaterSource()
 end
 
 function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects, test)
@@ -53,7 +53,7 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 
 			local option = context:addOption(getText(translation, name), object, ContextMenu.onFilterAction, player, not hasFilter)
 
-			local tooltip = nil
+			local tooltip
 			if not (hasFilter or playerHasFilter) then
 				tooltip = ISWorldObjectContextMenu.addToolTip()
 				tooltip:setName(getText(translation, name))
