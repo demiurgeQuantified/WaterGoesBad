@@ -40,7 +40,9 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 	if not SandboxVars.WaterGoesBad.NeedFilterWater then return end
 	-- i'd prefer to instead not add the event at all when filters are disabled, but it was causing bugs
 	local playerObj = getSpecificPlayer(player)
-	for _,object in ipairs(worldObjects) do
+	local objects = worldObjects[1] and worldObjects[1]:getSquare():getObjects()
+	for i=0, objects:size()-1 do
+		local object = objects:get(i)
 		if ContextMenu.isFilterable(object) then
 			local playerHasFilter = playerObj:getInventory():containsType('WaterGoesBad.TapFilter')
 			local playerHasWrench = playerObj:getInventory():containsTagEvalRecurse('PipeWrench', predicateNotBroken)
