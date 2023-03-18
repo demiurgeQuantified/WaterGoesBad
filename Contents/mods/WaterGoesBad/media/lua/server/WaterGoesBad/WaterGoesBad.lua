@@ -16,6 +16,7 @@
     For any questions, contact me through steam or on Discord - albion#0123
 ]]
 if isClient() then return end
+local getTileObjectList = IsoGridSquare.getLuaTileObjectList
 local hasWater = IsoObject.hasWater
 local usesExternalWaterSource = IsoObject.getUsesExternalWaterSource
 local getProperties = IsoObject.getProperties
@@ -44,7 +45,7 @@ end
 function WaterGoesBad.ReduceWater(object)
     local modData = object:getModData()
     local daysSimulated = modData.WGBDaysSimulated or 0
-    local daysNotSimulated = (WaterGoesBad.getDaysSinceExpiration() + 1) - daysSimulated
+    local daysNotSimulated = WaterGoesBad.getDaysSinceExpiration() + 1 - daysSimulated
 
     local daysToSimulate = 0
     if daysNotSimulated > 0 then
@@ -75,7 +76,7 @@ end
 ---Taints the water in an object, if it is valid, and simulates the water reduction, if enabled
 ---@param square IsoGridSquare
 function WaterGoesBad.TaintWater(square)
-    local objects = square:getLuaTileObjectList()
+    local objects = getTileObjectList(square)
     for i = 1, #objects do
         local object = objects[i]
         if WaterGoesBad.IsValidContainer(object) then
