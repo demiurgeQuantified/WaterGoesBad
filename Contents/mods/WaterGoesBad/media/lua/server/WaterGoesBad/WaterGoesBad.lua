@@ -16,6 +16,12 @@
     For any questions, contact me through steam or on Discord - albion#0123
 ]]
 if isClient() then return end
+local hasWater = IsoObject.hasWater
+local usesExternalWaterSource = IsoObject.getUsesExternalWaterSource
+local getProperties = IsoObject.getProperties
+local hasProperty = PropertyContainer.Is
+local setTaintedWater = IsoObject.setTaintedWater
+local sandboxVars = SandboxVars.WaterGoesBad
 
 local WaterGoesBad = {}
 WaterGoesBad.expirationDate = nil
@@ -30,50 +36,51 @@ end
 
 ---@param object IsoObject
 function WaterGoesBad.IsValidContainer(object)
-    return object:hasWater() and object:getProperties():Is(IsoFlagType.waterPiped) and not object:getUsesExternalWaterSource()
+    return hasWater(object) and hasProperty(getProperties(object), IsoFlagType.waterPiped) and not usesExternalWaterSource(object)
 end
 
 ---Simulates the reduction of water for every day since the water started draining that this object has not been loaded
 ---@param object IsoObject
 function WaterGoesBad.ReduceWater(object)
-    local daysSimulated = object:getModData()['WGBDaysSimulated'] or 0
+    local modData = object:getModData()
+    local daysSimulated = modData.WGBDaysSimulated or 0
     local daysNotSimulated = (WaterGoesBad.getDaysSinceExpiration() + 1) - daysSimulated
 
     local daysToSimulate = 0
     if daysNotSimulated > 0 then
-        if SandboxVars.WaterGoesBad.WaterReductionChance == 100 then
+        if sandboxVars.WaterReductionChance == 100 then
             daysToSimulate = daysNotSimulated
         else
             for i=1,daysNotSimulated do
-                if ZombRand(1, 101) <= ZombRand(SandboxVars.WaterGoesBad.WaterReductionChance) then
+                if ZombRand(1, 101) <= sandboxVars.WaterReductionChance then
                     daysToSimulate = daysToSimulate + 1
                 end
             end
         end
         
         if daysToSimulate > 0 then
-            local waterLoss = SandboxVars.WaterGoesBad.WaterReductionRate * daysToSimulate
-            if SandboxVars.WaterGoesBad.ScaleWaterLoss then
+            local waterLoss = sandboxVars.WaterReductionRate * daysToSimulate
+            if sandboxVars.ScaleWaterLoss then
                 waterLoss = waterLoss * (object:getWaterMax() / 20)
             end
             local wantedWater = object:getWaterAmount() - waterLoss
-            wantedWater = math.max(wantedWater, SandboxVars.WaterGoesBad.MinimumWaterLeft)
+            wantedWater = math.max(wantedWater, sandboxVars.MinimumWaterLeft)
             object:setWaterAmount(wantedWater)
         end
     end
-    
-    object:getModData()['WGBDaysSimulated'] = WaterGoesBad.getDaysSinceExpiration() + 1
+
+    modData.WGBDaysSimulated = WaterGoesBad.getDaysSinceExpiration() + 1
 end
 
 ---Taints the water in an object, if it is valid, and simulates the water reduction, if enabled
 ---@param square IsoGridSquare
 function WaterGoesBad.TaintWater(square)
-    local objectArray = square:getObjects()
-    for i = 0, objectArray:size() - 1 do
-        local object = objectArray:get(i)
+    local objects = square:getLuaTileObjectList()
+    for i = 1, #objects do
+        local object = objects[i]
         if WaterGoesBad.IsValidContainer(object) then
-            object:setTaintedWater(true)
-            if SandboxVars.WaterGoesBad.ReduceWaterOverTime and object:getWaterAmount() > SandboxVars.WaterGoesBad.MinimumWaterLeft then
+            setTaintedWater(object, true)
+            if sandboxVars.ReduceWaterOverTime and object:getWaterAmount() > sandboxVars.MinimumWaterLeft then
                 WaterGoesBad.ReduceWater(object)
             end
         end
@@ -88,22 +95,23 @@ function WaterGoesBad.EveryDays()
 end
 
 function WaterGoesBad.CalculateExpirationDate()
-    if ModData.exists('WaterGoesBad') then
-        WaterGoesBad.expirationDate = ModData.get('WaterGoesBad')['ExpirationDate']
-    else
+    local modData = ModData.getOrCreate("WaterGoesBad")
+    WaterGoesBad.expirationDate = modData.ExpirationDate
+    if not WaterGoesBad.expirationDate then
         local expirationDate
-        if SandboxVars.WaterGoesBad.ExpirationMax > SandboxVars.WaterGoesBad.ExpirationMin then
-            expirationDate = ZombRand(SandboxVars.WaterGoesBad.ExpirationMin, SandboxVars.WaterGoesBad.ExpirationMax + 1)
+
+        if sandboxVars.ExpirationMax > sandboxVars.ExpirationMin then
+            expirationDate = ZombRand(sandboxVars.ExpirationMin, sandboxVars.ExpirationMax + 1)
         else
-            expirationDate = SandboxVars.WaterGoesBad.ExpirationMin
+            expirationDate = sandboxVars.ExpirationMin
         end
         expirationDate = expirationDate + math.max(SandboxVars.WaterShutModifier, 0)
+
         WaterGoesBad.expirationDate = expirationDate
-        ModData.add('WaterGoesBad', {['ExpirationDate'] = expirationDate})
+        modData.ExpirationDate = expirationDate
     end
     if WaterGoesBad.getDaysSinceExpiration() >= 0 then Events.LoadGridsquare.Add(WaterGoesBad.TaintWater) else Events.EveryDays.Add(WaterGoesBad.EveryDays) end
-    Events.OnWaterAmountChange.Remove(WaterGoesBad.Filters.OnWaterAmountChange)
-    if SandboxVars.WaterGoesBad.NeedFilterWater then
+    if sandboxVars.NeedFilterWater then
         Events.OnWaterAmountChange.Add(WaterGoesBad.Filters.OnWaterAmountChange)
     end
 end
@@ -122,10 +130,11 @@ function WaterGoesBad.Commands.plumbObject(args)
         local object = sq:getObjects():get(args.index)
 
         local tainted = false
-        if SandboxVars.WaterGoesBad.NeedFilterWater then
-            tainted = IsoObject.FindExternalWaterSource(sq) and IsoObject.FindExternalWaterSource(sq):isTaintedWater() or false
+        if sandboxVars.NeedFilterWater then
+            local externalWaterSource = IsoObject.FindExternalWaterSource(sq)
+            tainted = externalWaterSource and externalWaterSource:isTaintedWater() or false
         end
-        object:setTaintedWater(tainted)
+        setTaintedWater(object, tainted)
         args = {x=args.x, y=args.y, z=args.z, index=args.index, tainted=tainted}
         sendServerCommand('WaterGoesBad', 'setTainted', args)
     end
