@@ -1,8 +1,5 @@
 local WaterGoesBad = {}
 
-WaterGoesBad.TimedActions = require 'WaterGoesBad/TimedActions'
-WaterGoesBad.ContextMenu = require 'WaterGoesBad/ContextMenu'
-
 function WaterGoesBad.OnGameStart()
     if not SandboxVars.WaterGoesBad.NeedFilterWater then
         getScriptManager():getRecipe('WaterGoesBad.Make Tap Filter'):setNeedToBeLearn(true)
@@ -18,7 +15,6 @@ Events.OnGameStart.Add(WaterGoesBad.OnGameStart)
 WaterGoesBad.Commands = {}
 
 function WaterGoesBad.Commands.setTainted(args)
-    print('setTainted '..tostring(args.x)..','..tostring(args.y)..','..tostring(args.z)..' '..tostring(args.index)..' '..tostring(args.tainted))
     local sq = getSquare(args.x, args.y, args.z)
     if sq and args.index >= 0 and args.index < sq:getObjects():size() then
         local object = sq:getObjects():get(args.index)

@@ -1,7 +1,6 @@
 module WaterGoesBad
 {
-    recipe Make Tap Filter
-    {
+    recipe Make Tap Filter {
         keep Base.Scissors,
         Base.WaterBottleEmpty/Base.PopBottleEmpty,
         Base.Sandbag=1,

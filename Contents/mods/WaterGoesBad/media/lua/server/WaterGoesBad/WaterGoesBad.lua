@@ -24,9 +24,10 @@ local hasProperty = PropertyContainer.Is
 local setTaintedWater = IsoObject.setTaintedWater
 local sandboxVars = SandboxVars.WaterGoesBad
 
+local Filters = require 'WaterGoesBad/Filters'
+
 local WaterGoesBad = {}
 WaterGoesBad.expirationDate = nil
-WaterGoesBad.Filters = require 'WaterGoesBad/Filters'
 
 ---@return number
 function WaterGoesBad.getDaysSinceExpiration()
@@ -113,7 +114,7 @@ function WaterGoesBad.CalculateExpirationDate()
     end
     if WaterGoesBad.getDaysSinceExpiration() >= 0 then Events.LoadGridsquare.Add(WaterGoesBad.TaintWater) else Events.EveryDays.Add(WaterGoesBad.EveryDays) end
     if sandboxVars.NeedFilterWater then
-        Events.OnWaterAmountChange.Add(WaterGoesBad.Filters.OnWaterAmountChange)
+        Events.OnWaterAmountChange.Add(Filters.OnWaterAmountChange)
     end
 end
 
