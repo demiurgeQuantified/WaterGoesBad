@@ -65,11 +65,3 @@ option WaterGoesBad.MinimumWaterLeft
 	page = WaterGoesBad,
 	translation = WaterGoesBad_MinimumWaterLeft,
 }
-
-option WaterGoesBad.ScaleWaterLoss
-{
-	type = boolean,
-	default = true,
-	page = WaterGoesBad,
-	translation = WaterGoesBad_ScaleWaterLoss,
-}

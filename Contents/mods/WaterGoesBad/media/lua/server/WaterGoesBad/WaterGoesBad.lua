@@ -61,12 +61,9 @@ function WaterGoesBad.ReduceWater(object)
         end
         
         if daysToSimulate > 0 then
-            local waterLoss = sandboxVars.WaterReductionRate * daysToSimulate
-            if sandboxVars.ScaleWaterLoss then
-                waterLoss = waterLoss * (object:getWaterMax() / 20)
-            end
-            local wantedWater = object:getWaterAmount() - waterLoss
-            wantedWater = math.max(wantedWater, sandboxVars.MinimumWaterLeft)
+            local scale = object:getWaterMax() / 20
+            local wantedWater = object:getWaterAmount() - sandboxVars.WaterReductionRate * daysToSimulate * scale
+            wantedWater = math.max(wantedWater, sandboxVars.MinimumWaterLeft * scale)
             object:setWaterAmount(wantedWater)
         end
     end
