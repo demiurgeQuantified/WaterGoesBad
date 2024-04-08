@@ -17,8 +17,12 @@ WaterGoesBad.Commands = {}
 function WaterGoesBad.Commands.setTainted(args)
     local sq = getSquare(args.x, args.y, args.z)
     if sq and args.index >= 0 and args.index < sq:getObjects():size() then
+        ---@type IsoObject
         local object = sq:getObjects():get(args.index)
         object:setTaintedWater(args.tainted)
+
+        -- vanilla fails to sync this for washers/dryers, due to overriding the method responsible for handling updates
+        object:setUsesExternalWaterSource(true)
     end
 end
 
