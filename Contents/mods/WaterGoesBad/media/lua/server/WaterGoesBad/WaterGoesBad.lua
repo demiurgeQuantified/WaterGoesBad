@@ -17,14 +17,15 @@
 ]]
 if isClient() then return end
 
+---@type IsoObject
 local mt = __classmetatables[IsoObject.class].__index
 local hasWater = mt.hasWater
 local usesExternalWaterSource = mt.getUsesExternalWaterSource
 local getProperties = mt.getProperties
 local setTaintedWater = mt.setTaintedWater
-local sandboxVars = SandboxVars.WaterGoesBad
 local getTileObjectList = __classmetatables[IsoGridSquare.class].__index.getLuaTileObjectList
-local hasProperty = __classmetatables[PropertyContainer.class].Is
+local hasProperty = __classmetatables[PropertyContainer.class].__index.Is
+local sandboxVars = SandboxVars.WaterGoesBad
 
 local Filters = require 'WaterGoesBad/Filters'
 
@@ -40,7 +41,9 @@ end
 
 ---@param object IsoObject
 function WaterGoesBad.IsValidContainer(object)
-    return hasWater(object) and hasProperty(getProperties(object), IsoFlagType.waterPiped) and not usesExternalWaterSource(object)
+    return hasWater(object) and 
+        hasProperty(getProperties(object), IsoFlagType.waterPiped) and 
+        not usesExternalWaterSource(object)
 end
 
 ---Simulates the reduction of water for every day since the water started draining that this object has not been loaded
@@ -76,8 +79,10 @@ end
 ---Taints the water in an object, if it is valid, and simulates the water reduction, if enabled
 ---@param square IsoGridSquare
 function WaterGoesBad.TaintWater(square)
+    ---@type table
     local objects = getTileObjectList(square)
     for i = 1, #objects do
+        ---@type IsoObject
         local object = objects[i]
         if WaterGoesBad.IsValidContainer(object) then
             setTaintedWater(object, true)
