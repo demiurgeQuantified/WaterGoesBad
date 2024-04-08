@@ -16,13 +16,15 @@
     For any questions, contact me through steam or on Discord - albion#0123
 ]]
 if isClient() then return end
-local getTileObjectList = IsoGridSquare.getLuaTileObjectList
-local hasWater = IsoObject.hasWater
-local usesExternalWaterSource = IsoObject.getUsesExternalWaterSource
-local getProperties = IsoObject.getProperties
-local hasProperty = PropertyContainer.Is
-local setTaintedWater = IsoObject.setTaintedWater
+
+local mt = __classmetatables[IsoObject.class].__index
+local hasWater = mt.hasWater
+local usesExternalWaterSource = mt.getUsesExternalWaterSource
+local getProperties = mt.getProperties
+local setTaintedWater = mt.setTaintedWater
 local sandboxVars = SandboxVars.WaterGoesBad
+local getTileObjectList = __classmetatables[IsoGridSquare.class].__index.getLuaTileObjectList
+local hasProperty = __classmetatables[PropertyContainer.class].Is
 
 local Filters = require 'WaterGoesBad/Filters'
 
