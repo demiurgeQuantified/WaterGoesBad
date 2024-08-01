@@ -1,10 +1,12 @@
 local ContextMenu = {}
 local TimedActions = require 'WaterGoesBad/TimedActions'
 
+---@param item InventoryItem
 local function predicateNotBroken(item)
 	return not item:isBroken()
 end
 
+---@param obj IsoObject
 local function getMoveableDisplayName(obj)
 	if not obj then return nil end
 	if not obj:getSprite() then return nil end
@@ -22,13 +24,13 @@ end
 ---@param itemToPipe IsoObject
 ---@param player number
 ---@param isAddFilter boolean
-function ContextMenu.onFilterAction(itemToPipe, player, isAddFilter)
+function ContextMenu.onFilterOptionPressed(itemToPipe, player, isAddFilter)
 	local playerObj = getSpecificPlayer(player)
 
 	local wrench = playerObj:getInventory():getFirstTagEvalRecurse('PipeWrench', predicateNotBroken)
 	ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), wrench, true)
 
-	ISTimedActionQueue.add(TimedActions.ISChangeTapFilter:new(playerObj, itemToPipe, wrench, isAddFilter, 100))
+	ISTimedActionQueue.add(TimedActions.ChangeTapFilterAction:new(playerObj, itemToPipe, wrench, isAddFilter, 100))
 end
 
 ---@param object IsoObject
@@ -36,8 +38,9 @@ function ContextMenu.isFilterable(object)
 	return object:getProperties() and object:getProperties():Is(IsoFlagType.waterPiped) and object:getUsesExternalWaterSource()
 end
 
-function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects, test)
-	if not SandboxVars.WaterGoesBad.NeedFilterWater then return end
+---@type Callback_OnFillWorldObjectContextMenu
+function ContextMenu.addFilterContextOption(player, context, worldObjects, test)
+	if test or not SandboxVars.WaterGoesBad.NeedFilterWater then return end
 	-- i'd prefer to instead not add the event at all when filters are disabled, but it was causing bugs
 	local playerObj = getSpecificPlayer(player)
 	local objects = worldObjects[1] and worldObjects[1]:getSquare():getObjects()
@@ -53,7 +56,7 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 			local translation = 'ContextMenu_AddFilter'
 			if hasFilter then translation = 'ContextMenu_RemoveFilter' end
 
-			local option = context:addOption(getText(translation, name), object, ContextMenu.onFilterAction, player, not hasFilter)
+			local option = context:addOption(getText(translation, name), object, ContextMenu.onFilterOptionPressed, player, not hasFilter)
 
 			local tooltip
 			if not (hasFilter or playerHasFilter) then
@@ -73,6 +76,11 @@ function ContextMenu.OnFillWorldObjectContextMenu(player, context, worldObjects,
 	end
 end
 
-Events.OnFillWorldObjectContextMenu.Add(ContextMenu.OnFillWorldObjectContextMenu)
+Events.OnFillWorldObjectContextMenu.Add(ContextMenu.addFilterContextOption)
+
+---@deprecated
+ContextMenu.OnFillWorldObjectContextMenu = ContextMenu.addFilterContextOption
+---@deprecated
+ContextMenu.onFilterOptionPressed = ContextMenu.onFilterOptionPressed
 
 return ContextMenu
