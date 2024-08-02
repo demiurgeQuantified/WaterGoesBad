@@ -19,7 +19,6 @@ if isClient() then return end
 
 ---@type IsoObject
 local mt = __classmetatables[IsoObject.class].__index
-local hasWater = mt.hasWater
 local usesExternalWaterSource = mt.getUsesExternalWaterSource
 local getProperties = mt.getProperties
 local setTaintedWater = mt.setTaintedWater
@@ -47,29 +46,36 @@ end
 ---@param object IsoObject
 ---@return boolean
 function WaterGoesBad.isValidContainer(object)
-    return hasWater(object) and
-        hasProperty(getProperties(object), IsoFlagType.waterPiped) and
+    return hasProperty(getProperties(object), IsoFlagType.waterPiped) and
         not usesExternalWaterSource(object)
 end
 
 ---Simulates the reduction of water for n days
 ---@param object IsoObject
 ---@param days integer
+---@return number
 function WaterGoesBad.reduceWater(object, days)
+    local startWater = object:getWaterAmount()
+    if startWater <= sandboxVars.MinimumWaterLeft then
+        return startWater
+    end
+
     if sandboxVars.WaterReductionChance ~= 100 then
         for _ = 1, days do
             if ZombRand(1, 101) > sandboxVars.WaterReductionChance then
                 days = days - 1
             end
         end
-        if days == 0 then return end
+        if days == 0 then return startWater end
     end
 
     local scale = object:getWaterMax() / 20
-    local wantedWater = object:getWaterAmount() - sandboxVars.WaterReductionRate * days * scale
-    wantedWater = math.max(wantedWater, sandboxVars.MinimumWaterLeft * scale)
+    local wantedWater = startWater - sandboxVars.WaterReductionRate * days * scale
+    local min = sandboxVars.MinimumWaterLeft * scale
+    wantedWater = wantedWater > min and wantedWater or min
+
     object:setWaterAmount(wantedWater)
-    sendServerCommand("object", "setWaterAmount", {x=object:getX(), y=object:getY(), z=object:getZ(), index=object:getObjectIndex(), amount=wantedWater})
+    return wantedWater
 end
 
 ---@type IsoGridSquare[]
@@ -82,27 +88,32 @@ end
 
 ---Taints the water in valid objects on a square, and simulates water reduction, if enabled
 ---@param square IsoGridSquare
+---@return table? squareData
 function WaterGoesBad.taintWater(square)
-    local modData = square:getModData()
-    local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (modData.WGBDaysSimulated or -1)
-    if daysNotSimulated <= 0 then return end
+    local squareModData = square:getModData()
+    local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (squareModData.WGBDaysSimulated or -1)
+    if daysNotSimulated <= 0 then return nil end
 
-    local x,y,z = square:getX(), square:getY(), square:getZ()
+    local squareData = {x = square:getX(), y = square:getY(), z = square:getZ()}
     local objects = getTileObjectList(square)
     for i = 1, #objects do
         local object = objects[i]
-        if WaterGoesBad.isValidContainer(object) then
-            if not object:isTaintedWater() then
-                setTaintedWater(object, true)
-                sendServerCommand("WaterGoesBad", "setTainted", {x=x, y=y, z=z, i=i - 1, tainted=true})
-            end
-            if sandboxVars.ReduceWaterOverTime and object:getWaterAmount() > sandboxVars.MinimumWaterLeft then
-                WaterGoesBad.reduceWater(object, daysNotSimulated)
+        local water = object:getWaterAmount()
+
+        if water > 0 and WaterGoesBad.isValidContainer(object) then
+            table.insert(squareData, i-1)
+            setTaintedWater(object, true)
+            if sandboxVars.ReduceWaterOverTime then
+                table.insert(squareData, WaterGoesBad.reduceWater(object, daysNotSimulated))
             end
         end
     end
 
-    modData.WGBDaysSimulated = WaterGoesBad.daysSinceExpiration - 1
+    if #squareData <= 0 then return nil end
+
+    squareModData.WGBDaysSimulated = WaterGoesBad.daysSinceExpiration - 1
+    square:transmitModdata()
+    return squareData
 end
 
 -- What portion of queued squares to act upon per tick
@@ -113,35 +124,35 @@ local MAX_SQUARES_PER_TICK = 2000
 -- Minimum squares per tick (so that it doesn't keep diminishing and end up taking extremely long to act upon the last few squares)
 local MIN_SQUARES_PER_TICK = 100
 
-if isServer() then -- server has a really low tickrate compared to sp
+if isServer() then -- server has a really low tickrate
     SQUARES_PER_TICK_FACTOR = 0.4
     MAX_SQUARES_PER_TICK = 10000
     MIN_SQUARES_PER_TICK = 500
 end
 
-local previousLen = 0
-local ticks = 0
-local startTime = 0
-local totalSquares = 0
+-- local previousLen = 0
+-- local ticks = 0
+-- local startTime = 0
+-- local totalSquares = 0
 
 function WaterGoesBad.processSquares()
     local len = #squaresToProcess
 
-    if len ~= 0 then
-        ticks = ticks + 1
-        if previousLen == 0 then
-            print("[WaterGoesBad] Starting processing squares")
-            startTime = os.time()
-        end
-    else
-        if previousLen ~= 0 then
-            print("[WaterGoesBad] Finished processing " .. totalSquares .. " squares (took " .. ticks .. " ticks (" .. (os.time() - startTime) .. " seconds))")
-            ticks = 0
-            totalSquares = 0
-        end
-    end
+    -- if len ~= 0 then
+    --     ticks = ticks + 1
+    --     if previousLen == 0 then
+    --         print("[WaterGoesBad] Starting processing squares")
+    --         startTime = os.time()
+    --     end
+    -- else
+    --     if previousLen ~= 0 then
+    --         print("[WaterGoesBad] Finished processing " .. totalSquares .. " squares (took " .. ticks .. " ticks (" .. (os.time() - startTime) .. " seconds))")
+    --         ticks = 0
+    --         totalSquares = 0
+    --     end
+    -- end
 
-    previousLen = len
+    -- previousLen = len
 
     if len == 0 then return end
 
@@ -150,12 +161,18 @@ function WaterGoesBad.processSquares()
     numSquares = (numSquares > MIN_SQUARES_PER_TICK and MIN_SQUARES_PER_TICK < len and MIN_SQUARES_PER_TICK or len)
         and (numSquares < MAX_SQUARES_PER_TICK and numSquares or MAX_SQUARES_PER_TICK)
         or len
+
+    local modifiedSquares = {}
     for i = len, len - numSquares, -1 do
-        WaterGoesBad.taintWater(squaresToProcess[i])
+        table.insert(modifiedSquares, WaterGoesBad.taintWater(squaresToProcess[i]))
         squaresToProcess[i] = nil
     end
 
-    totalSquares = totalSquares + numSquares
+    if #modifiedSquares > 0 then
+        sendServerCommand("WaterGoesBad", "updateSquares", modifiedSquares)
+    end
+
+    -- totalSquares = totalSquares + numSquares
 end
 
 
