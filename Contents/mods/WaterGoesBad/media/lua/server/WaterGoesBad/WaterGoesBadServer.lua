@@ -200,17 +200,4 @@ end
 
 Events.OnInitGlobalModData.Add(WaterGoesBad.calculateExpirationDate)
 
----@deprecated
-WaterGoesBad.ReduceWater = WaterGoesBad.reduceWater
----@deprecated
-WaterGoesBad.TaintWater = WaterGoesBad.taintWater
----@deprecated
-WaterGoesBad.CalculateExpirationDate = WaterGoesBad.calculateExpirationDate
----@deprecated
-WaterGoesBad.EveryDays = WaterGoesBad.updateDay
----@deprecated
-WaterGoesBad.IsValidContainer = WaterGoesBad.isValidContainer
----@deprecated
-WaterGoesBad.getDaysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration
-
 return WaterGoesBad

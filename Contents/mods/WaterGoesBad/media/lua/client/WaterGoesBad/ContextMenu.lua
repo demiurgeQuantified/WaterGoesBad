@@ -78,9 +78,4 @@ end
 
 Events.OnFillWorldObjectContextMenu.Add(ContextMenu.addFilterContextOption)
 
----@deprecated
-ContextMenu.OnFillWorldObjectContextMenu = ContextMenu.addFilterContextOption
----@deprecated
-ContextMenu.onFilterOptionPressed = ContextMenu.onFilterOptionPressed
-
 return ContextMenu

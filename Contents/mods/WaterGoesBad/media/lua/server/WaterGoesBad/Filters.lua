@@ -61,11 +61,4 @@ function Filters.handleWaterChange(object)
     end
 end
 
----@deprecated
-Filters.FindPlumbedObjects = Filters.findPlumbedObjects
----@deprecated
-Filters.FindPlumbedObjectOnSquare = Filters.findPlumbedObjectOnSquare
----@deprecated
-Filters.OnWaterAmountChange = Filters.handleWaterChange
-
 return Filters

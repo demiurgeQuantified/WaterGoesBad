@@ -33,10 +33,6 @@ function ChangeTapFilterAction:perform()
 end
 
 local TimedActions = {}
-
 TimedActions.ChangeTapFilterAction = ChangeTapFilterAction
-
----@deprecated
-TimedActions.ISChangeTapFilter = TimedActions.ChangeTapFilterAction
 
 return TimedActions

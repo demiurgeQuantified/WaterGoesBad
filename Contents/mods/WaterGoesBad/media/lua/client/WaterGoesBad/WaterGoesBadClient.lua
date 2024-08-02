@@ -8,7 +8,4 @@ end
 
 Events.OnGameStart.Add(WaterGoesBad.initRecipes)
 
----@deprecated
-WaterGoesBad.OnGameStart = WaterGoesBad.initRecipes
-
 return WaterGoesBad
