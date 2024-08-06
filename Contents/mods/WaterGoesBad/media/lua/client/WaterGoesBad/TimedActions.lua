@@ -3,8 +3,8 @@
 ---@field isAddFilter boolean
 local ChangeTapFilterAction = ISPlumbItem:derive("ChangeTapFilterAction")
 
-function ChangeTapFilterAction:new(character, itemToPipe, wrench, isAddFilter, time)
-	local o = ISPlumbItem.new(self, character, itemToPipe, wrench, time)
+function ChangeTapFilterAction.new(character, itemToPipe, wrench, isAddFilter, time)
+	local o = ISPlumbItem.new(ChangeTapFilterAction, character, itemToPipe, wrench, time)
 	o.modData = o.itemToPipe:getModData()
 	o.isAddFilter = isAddFilter
 	return o

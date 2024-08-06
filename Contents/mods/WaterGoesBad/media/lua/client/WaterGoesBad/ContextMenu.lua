@@ -30,7 +30,7 @@ function ContextMenu.onFilterOptionPressed(itemToPipe, player, isAddFilter)
 	local wrench = playerObj:getInventory():getFirstTagEvalRecurse('PipeWrench', predicateNotBroken)
 	ISWorldObjectContextMenu.equip(playerObj, playerObj:getPrimaryHandItem(), wrench, true)
 
-	ISTimedActionQueue.add(TimedActions.ChangeTapFilterAction:new(playerObj, itemToPipe, wrench, isAddFilter, 100))
+	ISTimedActionQueue.add(TimedActions.ChangeTapFilterAction.new(playerObj, itemToPipe, wrench, isAddFilter, 100))
 end
 
 ---@param object IsoObject
