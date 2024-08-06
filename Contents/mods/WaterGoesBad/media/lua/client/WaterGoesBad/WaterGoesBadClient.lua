@@ -11,9 +11,10 @@ WaterGoesBad.reduceTaintedWaterCounters = function()
         local player = getSpecificPlayer(i)
         if player then
             local modData = player:getModData()
-            modData.WGB_TaintedWaterDrank = modData.WGB_TaintedWaterDrank - 0.1
             if player:HasTrait("ProneToIllness") then
                 modData.WGB_TaintedWaterDrank = modData.WGB_TaintedWaterDrank - 0.03
+            else
+                modData.WGB_TaintedWaterDrank = modData.WGB_TaintedWaterDrank - 0.1
             end
             modData.WGB_TaintedWaterDrank = modData.WGB_TaintedWaterDrank > 0 and modData.WGB_TaintedWaterDrank or 0
         end
