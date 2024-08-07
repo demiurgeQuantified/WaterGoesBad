@@ -72,3 +72,5 @@ local function onServerCommand(module, command, args)
 end
 
 Events.OnServerCommand.Add(onServerCommand)
+
+return ServerCommands
