@@ -8,15 +8,15 @@ local ServerCommands = {}
 ---@param external? boolean
 function ServerCommands.setTainted(x, y, z, i, tainted, external)
     local square = getSquare(x, y, z)
-    if square then
-        ---@type IsoObject
-        local object = square:getObjects():get(i)
-        object:setTaintedWater(tainted)
+    if not square then return end
 
-        -- vanilla fails to sync this for washers/dryers, due to overriding the method responsible for handling updates
-        if external ~= nil then
-            object:setUsesExternalWaterSource(true)
-        end
+    local object = square:getObjects():get(i) --[[@as IsoObject]]
+    if not object then return end
+
+    object:setTaintedWater(tainted)
+    -- vanilla fails to sync this for washers/dryers, due to overriding the method responsible for handling updates
+    if external ~= nil then
+        object:setUsesExternalWaterSource(true)
     end
 end
 
@@ -40,7 +40,10 @@ function ServerCommands.updateSquares(squareDatas)
             ---@type IsoObject[]
             local objects = square:getLuaTileObjectList()
             for j = 1, #squareData, stride do
-                objects[squareData[j]]:setTaintedWater(true)
+                local object = objects[squareData[j]]
+                if object then
+                    object:setTaintedWater(true)
+                end
             end
         end
     end
@@ -53,7 +56,10 @@ function ServerCommands.updateSquares(squareDatas)
                 ---@type IsoObject[]
                 local objects = square:getLuaTileObjectList()
                 for j = 1, #squareData, stride do
-                    objects[squareData[j]]:setWaterAmount(squareData[j+1])
+                    local object = objects[squareData[j]]
+                    if object then
+                        object:setWaterAmount(squareData[j+1])
+                    end
                 end
             end
         end
