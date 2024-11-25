@@ -13,7 +13,7 @@ function ClientCommands.plumbObject(args)
     end
     object:setTaintedWater(tainted)
 
-    args = {x=args.x, y=args.y, z=args.z, i=args.i, tainted=tainted, external = true}
+    args = {x=args.x, y=args.y, z=args.z, i=args.index, tainted=tainted, external = true}
     sendServerCommand('WaterGoesBad', 'setTainted', args)
 end
 
