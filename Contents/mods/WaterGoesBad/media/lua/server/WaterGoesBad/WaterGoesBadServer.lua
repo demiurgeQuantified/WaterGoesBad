@@ -30,6 +30,8 @@ local sandboxVars = SandboxVars.WaterGoesBad
 
 local Filters = require 'WaterGoesBad/Filters'
 
+local rand = newrandom()
+
 local WaterGoesBad = {}
 ---@type integer
 WaterGoesBad.expirationDate = -1
@@ -188,16 +190,19 @@ end
 function WaterGoesBad.calculateExpirationDate()
     local modData = ModData.getOrCreate("WaterGoesBad")
 
+    local minDate = SandboxVars.WaterShutModifier + sandboxVars.ExpirationMin
+    local maxDate = SandboxVars.WaterShutModifier + sandboxVars.ExpirationMax
+
     WaterGoesBad.expirationDate = modData.ExpirationDate
-    if not WaterGoesBad.expirationDate then
+    if not WaterGoesBad.expirationDate or WaterGoesBad.expirationDate > maxDate or WaterGoesBad.expirationDate < minDate then
+        ---@type integer
         local expirationDate
 
         if sandboxVars.ExpirationMax > sandboxVars.ExpirationMin then
-            expirationDate = ZombRand(sandboxVars.ExpirationMin, sandboxVars.ExpirationMax + 1)
+            expirationDate = rand:random(minDate, maxDate)
         else
-            expirationDate = sandboxVars.ExpirationMin
+            expirationDate = minDate
         end
-        expirationDate = expirationDate + math.max(SandboxVars.WaterShutModifier, 0)
 
         WaterGoesBad.expirationDate = expirationDate
         modData.ExpirationDate = expirationDate
