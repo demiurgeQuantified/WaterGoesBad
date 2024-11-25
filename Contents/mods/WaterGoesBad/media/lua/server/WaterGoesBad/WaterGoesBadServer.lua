@@ -190,13 +190,14 @@ end
 function WaterGoesBad.calculateExpirationDate()
     local modData = ModData.getOrCreate("WaterGoesBad")
 
-    local minDate = SandboxVars.WaterShutModifier + sandboxVars.ExpirationMin
-    local maxDate = SandboxVars.WaterShutModifier + sandboxVars.ExpirationMax
+    local shutDate = SandboxVars.WaterShutModifier
+    shutDate = shutDate >= 0 and shutDate or 0 -- shut date can be -1, which is treated as zero
+    local minDate = shutDate + sandboxVars.ExpirationMin
+    local maxDate = shutDate + sandboxVars.ExpirationMax
 
-    WaterGoesBad.expirationDate = modData.ExpirationDate
-    if not WaterGoesBad.expirationDate or WaterGoesBad.expirationDate > maxDate or WaterGoesBad.expirationDate < minDate then
-        ---@type integer
-        local expirationDate
+    ---@type integer
+    local expirationDate = modData.ExpirationDate
+    if not expirationDate or expirationDate > maxDate or expirationDate < minDate then
 
         if sandboxVars.ExpirationMax > sandboxVars.ExpirationMin then
             expirationDate = rand:random(minDate, maxDate)
@@ -204,9 +205,9 @@ function WaterGoesBad.calculateExpirationDate()
             expirationDate = minDate
         end
 
-        WaterGoesBad.expirationDate = expirationDate
         modData.ExpirationDate = expirationDate
     end
+    WaterGoesBad.expirationDate = expirationDate
 
     WaterGoesBad.daysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration()
     if WaterGoesBad.daysSinceExpiration >= 0 then
