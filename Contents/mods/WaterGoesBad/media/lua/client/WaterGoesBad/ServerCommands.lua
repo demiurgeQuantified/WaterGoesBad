@@ -22,7 +22,7 @@ end
 
 ---@param squareDatas table[]
 function ServerCommands.updateSquares(squareDatas)
-    print("[WaterGoesBad] received data for " .. #squareDatas .. " squares")
+    -- print("[WaterGoesBad] received data for " .. #squareDatas .. " squares")
     local squares = {}
     for i = 1, #squareDatas do
         local squareData = squareDatas[i]
