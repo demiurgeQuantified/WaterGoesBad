@@ -64,7 +64,7 @@ function WaterGoesBad.reduceWater(object, days)
 
     if sandboxVars.WaterReductionChance ~= 100 then
         for _ = 1, days do
-            if ZombRand(1, 101) > sandboxVars.WaterReductionChance then
+            if rand:random(100) > sandboxVars.WaterReductionChance then
                 days = days - 1
             end
         end
