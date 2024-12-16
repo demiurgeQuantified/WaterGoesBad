@@ -91,6 +91,7 @@ function ContextMenu.addFilterContextOption(player, context, worldObjects, test)
 	end
 end
 
-Events.OnFillWorldObjectContextMenu.Add(ContextMenu.addFilterContextOption)
+-- this mechanic won't work until b42 readds plumbing anyway
+-- Events.OnFillWorldObjectContextMenu.Add(ContextMenu.addFilterContextOption)
 
 return ContextMenu
