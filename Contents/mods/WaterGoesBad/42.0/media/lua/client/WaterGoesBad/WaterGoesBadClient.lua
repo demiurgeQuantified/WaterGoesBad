@@ -1,13 +1,13 @@
 local WaterGoesBad = {}
 
-function WaterGoesBad.initRecipes()
-    -- ScriptManager.instance:getAllCraftRecipes():remove(
-    --     ScriptManager.instance:getCraftRecipe("WaterGoesBad.MakeTapFilter"))
-end
+-- function WaterGoesBad.initRecipes()
+--     ScriptManager.instance:getAllCraftRecipes():remove(
+--          ScriptManager.instance:getCraftRecipe("WaterGoesBad.MakeTapFilter"))
+-- end
 
--- TODO: check if b42 didn't make tainted water more dangerous anyway
+-- Events.OnGameStart.Add(WaterGoesBad.initRecipes)
 
-Events.OnGameStart.Add(WaterGoesBad.initRecipes)
+-- TODO: check if this still works
 
 WaterGoesBad.reduceTaintedWaterCounters = function()
     for i = 0, getNumActivePlayers() - 1 do
