@@ -12,9 +12,12 @@ description=This also introduces the need to filter plumbed taps. You'll need to
 description=[h1]Customisability[/h1]
 description=Sandbox variables allow you to customise how many days after the water shutoff the water becomes tainted (including instantly). The filters and water drain features can be turned off entirely, and the rate of drain can be changed.
 description=
+description=[h1]Build 42 note[/h1]
+description=Build 42 doesn't have plumbing working yet, so there are no tap filters in the B42 version of the mod.
+description=
 description=If you enjoy my mods, I'd appreciate it a lot if you considered leaving me a tip ^u^
 description=[url=https://ko-fi.com/starseamstress][img]https://storage.ko-fi.com/cdn/brandasset/kofi_button_dark.png[/img][/url]
 description=
 description=If there are any errors or you have any suggestions, please let me know!
-tags=Build 41;Balance;Hardmode;Misc;Multiplayer;Realistic
+tags=Build 41;Build 42;Balance;Hardmode;Misc;Multiplayer;Realistic
 visibility=public
