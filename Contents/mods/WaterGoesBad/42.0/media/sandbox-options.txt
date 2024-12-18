@@ -34,7 +34,7 @@ option WaterGoesBad.ExpirationMax
 option WaterGoesBad.ReduceWaterOverTime
 {
     type = boolean,
-    default = false,
+    default = true,
     page = WaterGoesBad,
     translation = WaterGoesBad_ReduceWaterOverTime,
 }
@@ -44,7 +44,7 @@ option WaterGoesBad.WaterReductionRate
     type = integer,
     max = 20,
     min = 1,
-    default = 1,
+    default = 3,
     page = WaterGoesBad,
     translation = WaterGoesBad_WaterReductionRate,
 }
