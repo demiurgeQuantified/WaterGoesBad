@@ -7,7 +7,7 @@ local WaterGoesBad = {}
 
 -- Events.OnGameStart.Add(WaterGoesBad.initRecipes)
 
--- TODO: check if this still works
+-- still works great, maybe not punishing enough for players without ProneToIllness though?
 
 WaterGoesBad.reduceTaintedWaterCounters = function()
     for i = 0, getNumActivePlayers() - 1 do

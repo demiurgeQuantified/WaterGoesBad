@@ -57,6 +57,8 @@ end
 ---@param days integer
 ---@return number
 function WaterGoesBad.reduceWater(object, days)
+    -- TODO: can this work in ml instead because of the new fluid system?
+    -- this might all be relying on legacy code lol
     local startWater = object:getWaterAmount()
     if startWater <= sandboxVars.MinimumWaterLeft then
         return startWater
@@ -92,8 +94,9 @@ end
 ---@param square IsoGridSquare
 ---@return table? squareData
 function WaterGoesBad.taintWater(square)
+    -- FIXME: this is simulating a day every time you load the area
     local squareModData = square:getModData()
-    local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (squareModData.WGBDaysSimulated or -1)
+    local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (squareModData.WGBDaysSimulated or 0)
     if daysNotSimulated <= 0 then return nil end
 
     local squareData = {x = square:getX(), y = square:getY(), z = square:getZ()}
@@ -113,7 +116,7 @@ function WaterGoesBad.taintWater(square)
 
     if #squareData <= 0 then return nil end
 
-    squareModData.WGBDaysSimulated = WaterGoesBad.daysSinceExpiration - 1
+    squareModData.WGBDaysSimulated = WaterGoesBad.daysSinceExpiration
     square:transmitModdata()
     return squareData
 end
