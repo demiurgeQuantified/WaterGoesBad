@@ -70,7 +70,7 @@ end
 local function onServerCommand(module, command, args)
     if module == "WaterGoesBad" then
         if command == "setTainted" then
-            ServerCommands.setTainted(args.x, args.y, args.z, args.i, args.tainted, args.external)
+            --ServerCommands.setTainted(args.x, args.y, args.z, args.i, args.tainted, args.external)
         elseif command == "updateSquares" then
             ServerCommands.updateSquares(args)
         end

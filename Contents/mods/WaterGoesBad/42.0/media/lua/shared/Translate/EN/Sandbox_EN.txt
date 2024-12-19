@@ -11,11 +11,11 @@ Sandbox_EN = {
     Sandbox_WaterGoesBad_ReduceWaterOverTime = "Drain Water Over Time",
     Sandbox_WaterGoesBad_ReduceWaterOverTime_tooltip = "After the water shutoff, water will drain from the taps.",
     Sandbox_WaterGoesBad_WaterReductionRate = "Water Drain Rate",
-    Sandbox_WaterGoesBad_WaterReductionRate_tooltip = "How much water will be removed from the taps per day.",
+    Sandbox_WaterGoesBad_WaterReductionRate_tooltip = "How much water will be removed from the taps per day, in litres.",
     Sandbox_WaterGoesBad_WaterReductionChance = "Water Drain Chance",
     Sandbox_WaterGoesBad_WaterReductionChance_tooltip = "Chance, per day, for water to be removed, to add variance.",
     Sandbox_WaterGoesBad_MinimumWaterLeft = "Minimum Remaining Water",
-    Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip = "Amount of water that will remain no matter what.",
+    Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip = "Amount of water, in litres, that will not be removed from taps by draining.",
     Sandbox_WaterGoesBad_ScaleWaterLoss = "Proportional Water Loss",
     Sandbox_WaterGoesBad_ScaleWaterLoss_tooltip = "Larger water containers such as baths will lose water faster than sinks.",
 }

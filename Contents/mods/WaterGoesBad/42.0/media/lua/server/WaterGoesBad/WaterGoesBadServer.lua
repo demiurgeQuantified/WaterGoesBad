@@ -20,8 +20,8 @@ if isClient() then return end
 ---@type IsoObject
 local mt = __classmetatables[IsoObject.class].__index
 local usesExternalWaterSource = mt.getUsesExternalWaterSource
-local getProperties = mt.getProperties
 local setTaintedWater = mt.setTaintedWater
+local getProperties = mt.getProperties
 ---@type fun(IsoGridSquare):IsoObject[]
 local getTileObjectList = __classmetatables[IsoGridSquare.class].__index.getLuaTileObjectList
 ---@type fun(PropertyContainer, IsoFlagType):boolean
@@ -57,8 +57,6 @@ end
 ---@param days integer
 ---@return number
 function WaterGoesBad.reduceWater(object, days)
-    -- TODO: can this work in ml instead because of the new fluid system?
-    -- this might all be relying on legacy code lol
     local startWater = object:getWaterAmount()
     if startWater <= sandboxVars.MinimumWaterLeft then
         return startWater
@@ -94,7 +92,6 @@ end
 ---@param square IsoGridSquare
 ---@return table? squareData
 function WaterGoesBad.taintWater(square)
-    -- FIXME: this is simulating a day every time you load the area
     local squareModData = square:getModData()
     local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (squareModData.WGBDaysSimulated or -1)
     if daysNotSimulated <= 0 then return nil end
@@ -104,6 +101,22 @@ function WaterGoesBad.taintWater(square)
     for i = 1, #objects do
         local object = objects[i]
         local water = object:getWaterAmount()
+
+        -- oh taps don't even use fluid containers (yet?) lol
+
+        -- local fluidContainer = object:getFluidContainer()
+
+        -- if fluidContainer and not fluidContainer:contains(Fluid.Water)
+        --         and WaterGoesBad.isValidContainer(object) then
+        --     table.insert(squareData, i-1)
+        --     local waterAmount = fluidContainer:getSpecificFluidAmount(Fluid.Water)
+        --     fluidContainer:adjustSpecificFluidAmount(Fluid.Water, 0)
+        --     if fluidContainer:contains(Fluid.TaintedWater) then
+        --         fluidContainer:adjustSpecificFluidAmount(
+        --         Fluid.TaintedWater, fluidContainer:getSpecificFluidAmount(Fluid.TaintedWater) + waterAmount)
+        --     else
+        --         fluidContainer:addFluid(Fluid.TaintedWater, waterAmount)
+        --     end
 
         if water > 0 and WaterGoesBad.isValidContainer(object) then
             table.insert(squareData, i-1)
