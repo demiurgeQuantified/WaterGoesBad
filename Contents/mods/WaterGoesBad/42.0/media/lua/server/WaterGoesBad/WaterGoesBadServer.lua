@@ -96,7 +96,7 @@ end
 function WaterGoesBad.taintWater(square)
     -- FIXME: this is simulating a day every time you load the area
     local squareModData = square:getModData()
-    local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (squareModData.WGBDaysSimulated or 0)
+    local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (squareModData.WGBDaysSimulated or -1)
     if daysNotSimulated <= 0 then return nil end
 
     local squareData = {x = square:getX(), y = square:getY(), z = square:getZ()}
