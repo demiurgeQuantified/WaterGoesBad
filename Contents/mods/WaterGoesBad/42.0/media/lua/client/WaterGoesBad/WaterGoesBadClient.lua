@@ -91,7 +91,7 @@ local old_ISDrinkFromBottle_drink = ISDrinkFromBottle.drink
 ---Also fixes drinking from a bottle not scaling with the amount drank
 ---@diagnostic disable-next-line: duplicate-set-field
 ISDrinkFromBottle.drink = function(self, _, percentage)
-    if self.item:isTaintedWater() then
+    if self.item:getFluidContainer():contains(Fluid.TaintedWater) then
         if percentage > 0.95 then
             percentage = 1.0
         end
@@ -110,6 +110,7 @@ ISDrinkFromBottle.drink = function(self, _, percentage)
         end
 
         WaterGoesBad.onDrinkTaintedWater(self.character, uses)
+        sendDamage(self.character)
     else
         old_ISDrinkFromBottle_drink(self, _, percentage)
     end
