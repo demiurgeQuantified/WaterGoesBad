@@ -24,7 +24,7 @@ end
 ---@param addFilter boolean
 function ClientCommands.changeFilter(x, y, z, i, addFilter)
     local square = getSquare(x, y, z)
-    local object = square:getObjects():get(i)
+    local object = square:getObjects():get(i) --[[@as IsoObject]]
 
     local shouldTaint
     if addFilter then

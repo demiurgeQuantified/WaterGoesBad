@@ -61,4 +61,12 @@ function Filters.handleWaterChange(object)
     end
 end
 
+Filters.init = function()
+    if SandboxVars.WaterGoesBad.NeedFilterWater then
+        Events.OnWaterAmountChange.Add(Filters.handleWaterChange)
+    end
+end
+
+Events.OnInitGlobalModData.Add(Filters.init)
+
 return Filters

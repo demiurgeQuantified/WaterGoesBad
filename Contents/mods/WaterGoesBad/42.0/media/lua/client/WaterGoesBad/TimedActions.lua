@@ -9,8 +9,7 @@ ChangeTapFilterAction.__index = ChangeTapFilterAction
 ---@param itemToPipe IsoObject
 ---@param wrench InventoryItem
 ---@param isAddFilter boolean
----@param time integer
-function ChangeTapFilterAction.new(character, itemToPipe, wrench, isAddFilter, time)
+function ChangeTapFilterAction.new(character, itemToPipe, wrench, isAddFilter)
 	local o = ISPlumbItem:new(character, itemToPipe, wrench)
 	setmetatable(o, ChangeTapFilterAction)
 

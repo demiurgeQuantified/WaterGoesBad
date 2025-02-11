@@ -91,7 +91,7 @@ function ContextMenu.addFilterContextOption(player, context, worldObjects, test)
 	end
 end
 
--- this mechanic won't work until b42 readds plumbing anyway
+-- FIXME: b42 has added back plumbing, but the filter code needs to be updated before it is reactivated
 -- Events.OnFillWorldObjectContextMenu.Add(ContextMenu.addFilterContextOption)
 
 return ContextMenu

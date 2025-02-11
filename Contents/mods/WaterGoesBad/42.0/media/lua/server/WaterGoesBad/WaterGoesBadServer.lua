@@ -17,46 +17,21 @@
 ]]
 if isClient() then return end
 
----@type IsoObject
-local mt = __classmetatables[IsoObject.class].__index
-local usesExternalWaterSource = mt.getUsesExternalWaterSource
-local setTaintedWater = mt.setTaintedWater
-local getProperties = mt.getProperties
 ---@type fun(IsoGridSquare):IsoObject[]
 local getTileObjectList = __classmetatables[IsoGridSquare.class].__index.getLuaTileObjectList
----@type fun(PropertyContainer, IsoFlagType):boolean
-local hasProperty = __classmetatables[PropertyContainer.class].__index.Is
 local sandboxVars = SandboxVars.WaterGoesBad
 
-local Filters = require 'WaterGoesBad/Filters'
+local WaterGoesBad = require("WaterGoesBad/WaterGoesBad")
 
 local rand = newrandom()
 
-local WaterGoesBad = {}
----@type integer
-WaterGoesBad.expirationDate = -1
----@type integer
-WaterGoesBad.daysSinceExpiration = 0
-
----@return integer
-function WaterGoesBad.calculateDaysSinceExpiration()
-    local daysSurvived = getGameTime():getWorldAgeHours() / 24
-    daysSurvived = math.floor(daysSurvived + 0.5)
-    return daysSurvived - WaterGoesBad.expirationDate
-end
-
----@param object IsoObject
----@return boolean
-function WaterGoesBad.isValidContainer(object)
-    return hasProperty(getProperties(object), IsoFlagType.waterPiped) and
-        not usesExternalWaterSource(object)
-end
+local WaterGoesBadServer = {}
 
 ---Simulates the reduction of water for n days
 ---@param object IsoObject
 ---@param days integer
 ---@return number
-function WaterGoesBad.reduceWater(object, days)
+function WaterGoesBadServer.reduceWater(object, days)
     local startWater = object:getWaterAmount()
     if startWater <= sandboxVars.MinimumWaterLeft then
         return startWater
@@ -76,7 +51,7 @@ function WaterGoesBad.reduceWater(object, days)
     local min = sandboxVars.MinimumWaterLeft * scale
     wantedWater = wantedWater > min and wantedWater or min
 
-    object:setWaterAmount(wantedWater)
+    object:setWaterAmount(wantedWater, true)
     return wantedWater
 end
 
@@ -84,14 +59,14 @@ end
 local squaresToProcess = {}
 
 ---@param square IsoGridSquare
-function WaterGoesBad.addSquare(square)
+function WaterGoesBadServer.addSquare(square)
     table.insert(squaresToProcess, square)
 end
 
 ---Taints the water in valid objects on a square, and simulates water reduction, if enabled
 ---@param square IsoGridSquare
 ---@return table? squareData
-function WaterGoesBad.taintWater(square)
+function WaterGoesBadServer.drainWater(square)
     local squareModData = square:getModData()
     local daysNotSimulated = WaterGoesBad.daysSinceExpiration - (squareModData.WGBDaysSimulated or -1)
     if daysNotSimulated <= 0 then return nil end
@@ -120,10 +95,7 @@ function WaterGoesBad.taintWater(square)
 
         if water > 0 and WaterGoesBad.isValidContainer(object) then
             table.insert(squareData, i-1)
-            setTaintedWater(object, true)
-            if sandboxVars.ReduceWaterOverTime then
-                table.insert(squareData, WaterGoesBad.reduceWater(object, daysNotSimulated))
-            end
+            table.insert(squareData, WaterGoesBadServer.reduceWater(object, daysNotSimulated))
         end
     end
 
@@ -153,7 +125,7 @@ end
 -- local startTime = 0
 -- local totalSquares = 0
 
-function WaterGoesBad.processSquares()
+function WaterGoesBadServer.processSquares()
     local len = #squaresToProcess
 
     -- if len ~= 0 then
@@ -182,7 +154,7 @@ function WaterGoesBad.processSquares()
 
     local modifiedSquares = {}
     for i = len, len - numSquares, -1 do
-        table.insert(modifiedSquares, WaterGoesBad.taintWater(squaresToProcess[i]))
+        table.insert(modifiedSquares, WaterGoesBadServer.drainWater(squaresToProcess[i]))
         squaresToProcess[i] = nil
     end
 
@@ -193,50 +165,30 @@ function WaterGoesBad.processSquares()
     -- totalSquares = totalSquares + numSquares
 end
 
-
-function WaterGoesBad.updateDay()
-    local daysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration()
-    if daysSinceExpiration >= 0 and WaterGoesBad.daysSinceExpiration < 0 then
-        Events.LoadGridsquare.Add(WaterGoesBad.addSquare)
-        Events.OnTick.Add(WaterGoesBad.processSquares)
+WaterGoesBadServer.startDrainingWater = function()
+    if not sandboxVars.ReduceWaterOverTime then
+        return
     end
-    WaterGoesBad.daysSinceExpiration = daysSinceExpiration
+
+    Events.LoadGridsquare.Add(WaterGoesBadServer.addSquare)
+    Events.OnTick.Add(WaterGoesBadServer.processSquares)
 end
 
-function WaterGoesBad.calculateExpirationDate()
-    local modData = ModData.getOrCreate("WaterGoesBad")
+WaterGoesBad.onWaterExpired:addListener(WaterGoesBadServer.startDrainingWater)
 
-    local shutDate = SandboxVars.WaterShutModifier
-    shutDate = shutDate >= 0 and shutDate or 0 -- shut date can be -1, which is treated as zero
-    local minDate = shutDate + sandboxVars.ExpirationMin
-    local maxDate = shutDate + sandboxVars.ExpirationMax
+---@deprecated Moved to WaterGoesBad module
+WaterGoesBadServer.isValidContainer = WaterGoesBad.isValidContainer
 
-    ---@type integer
-    local expirationDate = modData.ExpirationDate
-    if not expirationDate or expirationDate > maxDate or expirationDate < minDate then
+---@deprecated Moved to WaterGoesBad module
+WaterGoesBadServer.calculateDaysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration
 
-        if sandboxVars.ExpirationMax > sandboxVars.ExpirationMin then
-            expirationDate = rand:random(minDate, maxDate)
-        else
-            expirationDate = minDate
-        end
+---@deprecated Renamed to drainWater, as it no longer taints water
+WaterGoesBadServer.taintWater = WaterGoesBadServer.drainWater
 
-        modData.ExpirationDate = expirationDate
-    end
-    WaterGoesBad.expirationDate = expirationDate
+---@deprecated Moved to WaterGoesBad module
+WaterGoesBadServer.expirationDate = -1
 
-    WaterGoesBad.daysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration()
-    if WaterGoesBad.daysSinceExpiration >= 0 then
-        Events.LoadGridsquare.Add(WaterGoesBad.addSquare)
-        Events.OnTick.Add(WaterGoesBad.processSquares)
-    end
-    Events.EveryDays.Add(WaterGoesBad.updateDay)
+---@deprecated Moved to WaterGoesBad module
+WaterGoesBadServer.daysSinceExpiration = 0
 
-    if sandboxVars.NeedFilterWater then
-        Events.OnWaterAmountChange.Add(Filters.handleWaterChange)
-    end
-end
-
-Events.OnInitGlobalModData.Add(WaterGoesBad.calculateExpirationDate)
-
-return WaterGoesBad
+return WaterGoesBadServer

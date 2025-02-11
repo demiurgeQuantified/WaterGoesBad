@@ -31,23 +31,6 @@ function ServerCommands.updateSquares(squareDatas)
         squares[i] = square
     end
 
-    local stride = SandboxVars.WaterGoesBad.ReduceWaterOverTime and 2 or 1
-
-    for i = 1, #squareDatas do
-        local square = squares[i]
-        if square then
-            local squareData = squareDatas[i]
-            ---@type IsoObject[]
-            local objects = square:getLuaTileObjectList()
-            for j = 1, #squareData, stride do
-                local object = objects[squareData[j]]
-                if object then
-                    object:setTaintedWater(true)
-                end
-            end
-        end
-    end
-
     if SandboxVars.WaterGoesBad.ReduceWaterOverTime then
         for i = 1, #squareDatas do
             local square = squares[i]
@@ -55,10 +38,10 @@ function ServerCommands.updateSquares(squareDatas)
                 local squareData = squareDatas[i]
                 ---@type IsoObject[]
                 local objects = square:getLuaTileObjectList()
-                for j = 1, #squareData, stride do
+                for j = 1, #squareData, 2 do
                     local object = objects[squareData[j]]
                     if object then
-                        object:setWaterAmount(squareData[j+1])
+                        object:setWaterAmount(squareData[j+1], true)
                     end
                 end
             end
