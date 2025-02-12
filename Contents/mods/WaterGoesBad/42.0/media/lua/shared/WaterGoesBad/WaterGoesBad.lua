@@ -2,9 +2,6 @@ local LuaEvent = require("Starlit/LuaEvent")
 
 ---@type GameTime
 local gameTime
-Events.OnGameTimeLoaded.Add(function ()
-    gameTime = getGameTime()
-end)
 
 local sandboxVars = SandboxVars.WaterGoesBad
 local rand = newrandom()
@@ -39,7 +36,9 @@ function WaterGoesBad.isWaterExpired()
     return WaterGoesBad.calculateDaysSinceExpiration() >= 0
 end
 
-function WaterGoesBad.calculateExpirationDate()
+function WaterGoesBad.init()
+    gameTime = getGameTime()
+
     local modData = ModData.getOrCreate("WaterGoesBad")
 
     local shutDate = SandboxVars.WaterShutModifier
@@ -67,7 +66,7 @@ function WaterGoesBad.calculateExpirationDate()
     end
 end
 
-Events.OnInitGlobalModData.Add(WaterGoesBad.calculateExpirationDate)
+Events.OnInitGlobalModData.Add(WaterGoesBad.init)
 
 function WaterGoesBad.updateDay()
     local daysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration()
@@ -78,5 +77,8 @@ function WaterGoesBad.updateDay()
 end
 
 Events.EveryDays.Add(WaterGoesBad.updateDay)
+
+---@deprecated Renamed to init, as the current name was misleading.
+WaterGoesBad.calculateExpirationDate = WaterGoesBad.init
 
 return WaterGoesBad
