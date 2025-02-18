@@ -11,3 +11,18 @@ isoObject.isTaintedWater = function(self)
     end
     return old_isTaintedWater(self)
 end
+
+local old_getWaterAmount = isoObject.getWaterAmount
+
+---@param self IsoObject
+local function getWaterAmount(self)
+
+    -- HACK: temporarily unhook the function so calls to getWaterAmount in updateObject won't be recursive
+    isoObject.getWaterAmount = old_getWaterAmount
+    WaterGoesBad.updateObject(self)
+    isoObject.getWaterAmount = getWaterAmount
+
+    return old_getWaterAmount(self)
+end
+
+isoObject.getWaterAmount = getWaterAmount

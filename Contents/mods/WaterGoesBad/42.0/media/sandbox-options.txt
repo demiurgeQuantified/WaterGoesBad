@@ -41,22 +41,12 @@ option WaterGoesBad.ReduceWaterOverTime
 
 option WaterGoesBad.WaterReductionRate
 {
-    type = integer,
+    type = double,
     max = 20,
     min = 1,
     default = 3,
     page = WaterGoesBad,
     translation = WaterGoesBad_WaterReductionRate,
-}
-
-option WaterGoesBad.WaterReductionChance
-{
-    type = integer,
-    max = 100,
-    min = 1,
-    default = 90,
-    page = WaterGoesBad,
-    translation = WaterGoesBad_WaterReductionChance,
 }
 
 option WaterGoesBad.MinimumWaterLeft
