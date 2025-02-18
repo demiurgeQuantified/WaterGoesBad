@@ -62,7 +62,7 @@ option WaterGoesBad.WaterReductionChance
 option WaterGoesBad.MinimumWaterLeft
 {
     type = integer,
-    max = 99,
+    max = 20,
     min = 0,
     default = 2,
     page = WaterGoesBad,
