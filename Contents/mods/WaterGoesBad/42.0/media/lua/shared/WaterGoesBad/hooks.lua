@@ -1,13 +1,23 @@
 local WaterGoesBad = require("WaterGoesBad/WaterGoesBad")
 
+local sandboxVars = SandboxVars.WaterGoesBad
+
 ---@type IsoObject
 local isoObject = __classmetatables[IsoObject.class].__index
 
 local old_isTaintedWater = isoObject.isTaintedWater
 isoObject.isTaintedWater = function(self)
-    if WaterGoesBad.isWaterExpired() and WaterGoesBad.isValidContainer(self)
-            and not self:getUsesExternalWaterSource() then
-        return true
+    if WaterGoesBad.isWaterExpired() and WaterGoesBad.isValidContainer(self) then
+        if not sandboxVars.NeedFilterWater or not self:getUsesExternalWaterSource() then
+            return old_isTaintedWater(self)
+        else
+            local modData = self:getModData().WaterGoesBad
+            if not modData or not modData.hasTapFilter then
+                return IsoObject.FindExternalWaterSource(self:getSquare()):isTaintedWater()
+            end
+
+            return false
+        end
     end
     return old_isTaintedWater(self)
 end

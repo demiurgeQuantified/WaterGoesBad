@@ -1,5 +1,6 @@
 local WaterGoesBadClient = {}
 
+-- FIXME
 -- function WaterGoesBadClient.initRecipes()
 --     ScriptManager.instance:getAllCraftRecipes():remove(
 --          ScriptManager.instance:getCraftRecipe("WaterGoesBad.MakeTapFilter"))

@@ -20,16 +20,13 @@ option WaterGoesBad.ExpirationMax
     translation = WaterGoesBad_ExpirationMax,
 }
 
-/* plumbing doesn't work in b42 yet */
-/*
- *option WaterGoesBad.NeedFilterWater
- *{
- *    type = boolean,
- *    default = true,
- *    page = WaterGoesBad,
- *    translation = WaterGoesBad_NeedFilterWater,
- *}
- */
+option WaterGoesBad.NeedFilterWater
+{
+    type = boolean,
+    default = true,
+    page = WaterGoesBad,
+    translation = WaterGoesBad_NeedFilterWater,
+}
 
 option WaterGoesBad.ReduceWaterOverTime
 {

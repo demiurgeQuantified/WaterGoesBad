@@ -1,5 +1,5 @@
 local ContextMenu = {}
-local TimedActions = require("WaterGoesBad/TimedActions")
+local ChangeTapFilterAction = require("WaterGoesBad/timedActions/ChangeTapFilterAction")
 
 ---@param item InventoryItem
 local function predicateNotBroken(item)
@@ -33,7 +33,7 @@ function ContextMenu.onFilterOptionPressed(itemToPipe, player, isAddFilter)
 		playerObj, playerObj:getPrimaryHandItem(), wrench, true)
 
 	ISTimedActionQueue.add(
-		TimedActions.ChangeTapFilterAction.new(
+		ChangeTapFilterAction.new(
 			playerObj, itemToPipe, wrench, isAddFilter))
 end
 
@@ -53,6 +53,7 @@ function ContextMenu.addFilterContextOption(player, context, worldObjects, test)
 	local objects = worldObjects[1] and worldObjects[1]:getSquare():getObjects()
 	if not objects then return end
 
+	-- FIXME: fuck all this
 	for i=0, objects:size()-1 do
 		local object = objects:get(i)
 		if ContextMenu.isFilterable(object) then
@@ -62,7 +63,8 @@ function ContextMenu.addFilterContextOption(player, context, worldObjects, test)
 				"PipeWrench", predicateNotBroken)
 			if not (playerHasFilter or playerHasWrench) then return end
 
-			local hasFilter = object:getModData().hasFilter
+			local modData = object:getModData().WaterGoesBad
+			local hasFilter = modData and modData.hasTapFilter
 			local objectName = getMoveableDisplayName(object) or ""
 			local name = getText(
 				hasFilter and "ContextMenu_WaterGoesBad_RemoveFilter" or "ContextMenu_WaterGoesBad_AddFilter", objectName)
@@ -91,7 +93,6 @@ function ContextMenu.addFilterContextOption(player, context, worldObjects, test)
 	end
 end
 
--- FIXME: b42 has added back plumbing, but the filter code needs to be updated before it is reactivated
--- Events.OnFillWorldObjectContextMenu.Add(ContextMenu.addFilterContextOption)
+Events.OnFillWorldObjectContextMenu.Add(ContextMenu.addFilterContextOption)
 
 return ContextMenu

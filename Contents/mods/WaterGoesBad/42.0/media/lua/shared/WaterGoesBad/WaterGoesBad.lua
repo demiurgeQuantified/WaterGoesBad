@@ -22,7 +22,6 @@ WaterGoesBad.onWaterExpired = LuaEvent.new()
 ---@return boolean
 function WaterGoesBad.isValidContainer(object)
     return object:getProperties():Is(IsoFlagType.waterPiped)
-        and not object:getUsesExternalWaterSource()
 end
 
 ---@return integer
@@ -70,7 +69,7 @@ end
 ---Updates an object if it is required.
 ---@param object IsoObject The object to be updated.
 WaterGoesBad.updateObject = function(object)
-    if not WaterGoesBad.isValidContainer(object) then
+    if not WaterGoesBad.isValidContainer(object) or object:getUsesExternalWaterSource() then
         return
     end
 
