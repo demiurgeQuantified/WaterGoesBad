@@ -8,16 +8,19 @@ local isoObject = __classmetatables[IsoObject.class].__index
 local old_isTaintedWater = isoObject.isTaintedWater
 isoObject.isTaintedWater = function(self)
     if WaterGoesBad.isWaterExpired() and WaterGoesBad.isValidContainer(self) then
-        if not sandboxVars.NeedFilterWater or not self:getUsesExternalWaterSource() then
-            return old_isTaintedWater(self)
-        else
-            local modData = self:getModData().WaterGoesBad
-            if not modData or not modData.hasTapFilter then
-                return IsoObject.FindExternalWaterSource(self:getSquare()):isTaintedWater()
-            end
+        if self:getUsesExternalWaterSource() then
+            if not sandboxVars.NeedFilterWater then
+                return old_isTaintedWater(self)
+            else
+                local modData = self:getModData().WaterGoesBad
+                if not modData or not modData.hasTapFilter then
+                    return IsoObject.FindExternalWaterSource(self:getSquare()):isTaintedWater()
+                end
 
-            return false
+                return old_isTaintedWater(self)
+            end
         end
+        return true
     end
     return old_isTaintedWater(self)
 end
