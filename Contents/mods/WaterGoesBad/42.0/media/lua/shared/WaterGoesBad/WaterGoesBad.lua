@@ -21,7 +21,7 @@ WaterGoesBad.onWaterExpired = LuaEvent.new()
 ---@param object IsoObject
 ---@return boolean
 function WaterGoesBad.isValidContainer(object)
-    return object:getProperties():Is(IsoFlagType.waterPiped)
+    return object:getProperties():Is(IsoFlagType.waterPiped) and not object:getModData().canBeWaterPiped
 end
 
 ---@return integer
@@ -36,6 +36,27 @@ function WaterGoesBad.isWaterExpired()
     return WaterGoesBad.daysSinceExpiration >= 0
 end
 
+---@param object IsoObject
+---@return boolean taint
+WaterGoesBad.shouldTaintContainer = function(object)
+    if WaterGoesBad.isWaterExpired() and WaterGoesBad.isValidContainer(object) then
+        if object:getUsesExternalWaterSource() then
+            if not sandboxVars.NeedFilterWater then
+                return object:isTaintedWater()
+            else
+                local modData = object:getModData().WaterGoesBad
+                if not modData or not modData.hasTapFilter then
+                    return IsoObject.FindExternalWaterSource(object:getSquare()):isTaintedWater()
+                end
+
+                return object:isTaintedWater()
+            end
+        end
+        return true
+    end
+    return object:isTaintedWater()
+end
+
 -- TODO: water loss could be made smoother than once a day, now that water amount isn't integer anyway
 
 ---Simulates a given amount of days of water drainage for an object with piped water.
@@ -43,8 +64,8 @@ end
 ---@param object IsoObject The piped water object being drained.
 ---@param days number The number of days to simulate water drain of.
 WaterGoesBad.drainPipedWater = function(object, days)
-    local scale = object:getWaterMax() * 0.05 -- 20 = 1x
-    local water = object:getWaterAmount()
+    local scale = object:getFluidCapacity() * 0.05 -- 20 = 1x
+    local water = object:getFluidAmount()
     local minWater = sandboxVars.MinimumWaterLeft * scale
     if water <= minWater then
         return
@@ -63,7 +84,8 @@ WaterGoesBad.drainPipedWater = function(object, days)
         water = minWater
     end
 
-    object:setWaterAmount(water, true)
+    -- TODO: check that this works
+    object:getModData().waterAmount = water
 end
 
 ---Updates an object if it is required.
