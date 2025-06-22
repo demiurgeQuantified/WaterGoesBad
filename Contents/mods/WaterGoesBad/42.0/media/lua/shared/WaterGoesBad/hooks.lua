@@ -78,3 +78,21 @@ local function getFluidAmount(self)
 end
 
 isoObject.getFluidAmount = getFluidAmount
+
+-- Update the object when a drink context menu option is added
+--  this is necessary because 42.9.0 moved this logic to the java side
+
+Events.OnFillWorldObjectContextMenu.Add(function(playerNum, context, worldObjects, test)
+    -- search submenus for drink option
+    --  drink option is never in the root level
+    for i = 1, context.subOptionNums do
+        local childContext = context:getSubMenu(i)
+        -- not really sure why but childContext:getOptionFromName didn't want to work here
+        for j = 1, #childContext.options do
+            local option = childContext.options[j]
+            if option.name == getText("ContextMenu_Drink") and instanceof(option.param3, "IsoObject") then
+                WaterGoesBad.updateObject(option.param3)
+            end
+        end
+    end
+end)
