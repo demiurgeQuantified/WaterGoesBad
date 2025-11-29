@@ -1,0 +1,3 @@
+local ServerCommands = {}
+
+return ServerCommands
