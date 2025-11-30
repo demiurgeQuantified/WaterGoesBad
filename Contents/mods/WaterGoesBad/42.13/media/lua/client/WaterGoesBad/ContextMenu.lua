@@ -1,4 +1,4 @@
-local ChangeTapFilterAction = require("WaterGoesBad/timedActions/ChangeTapFilterAction")
+local ChangeTapFilterAction = require("WaterGoesBad/ChangeTapFilterAction")
 local Utils = require("WaterGoesBad/Utils")
 
 
