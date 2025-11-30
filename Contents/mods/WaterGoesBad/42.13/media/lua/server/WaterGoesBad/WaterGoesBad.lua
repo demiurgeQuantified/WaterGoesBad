@@ -1,5 +1,9 @@
+if isClient() then
+    return
+end
+
+
 local LuaEvent = require("Starlit/LuaEvent")
-local Utils = require("WaterGoesBad/Utils")
 
 
 ---@type GameTime

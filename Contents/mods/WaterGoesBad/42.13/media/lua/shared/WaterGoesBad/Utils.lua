@@ -22,4 +22,17 @@ function Utils.getMoveableDisplayName(obj)
 end
 
 
+---@param object IsoObject
+---@return boolean
+---@nodiscard
+function Utils.hasFilter(object)
+    if not object:hasModData() then
+        return false
+    end
+
+    local modData = object:getModData()
+    return modData.WaterGoesBad and modData.WaterGoesBad.hasTapFilter
+end
+
+
 return Utils
