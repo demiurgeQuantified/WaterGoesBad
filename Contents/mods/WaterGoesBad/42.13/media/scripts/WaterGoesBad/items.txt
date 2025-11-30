@@ -2,7 +2,7 @@ module WaterGoesBad {
     item TapFilter {
         DisplayCategory = Water,
         Weight = 0.1,
-        Type = Normal,
+        ItemType = base:normal,
         DisplayName = Tap Filter,
         /* FIXME: this looks really bad lol */
         /* FIXME: put this in a texture pack so it won't be filtered in the crafting menu */
