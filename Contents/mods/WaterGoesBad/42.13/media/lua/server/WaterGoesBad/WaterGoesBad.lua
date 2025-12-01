@@ -19,7 +19,7 @@ local WaterGoesBad = {}
 
 
 ---@type integer
-WaterGoesBad.expirationDate = -1
+WaterGoesBad.expirationDay = -1
 
 ---@type integer
 WaterGoesBad.daysSinceExpiration = 0
@@ -32,22 +32,12 @@ WaterGoesBad.DRAIN_SPEED_VARIANCE = 0.4
 WaterGoesBad.onWaterExpired = LuaEvent.new()
 
 
----@param object IsoObject
----@return boolean
----@nodiscard
-function WaterGoesBad.isPipedContainer(object)
-    return object:hasProperty(IsoFlagType.waterPiped)
-            -- we check hasModData first to avoid giving every object in the entire world mod data
-            and (not object:hasModData() or not object:getModData().canBeWaterPiped)
-end
-
-
 ---@return integer
 ---@nodiscard
 function WaterGoesBad.calculateDaysSinceExpiration()
     local daysSurvived = gameTime:getWorldAgeHours() / 24
     daysSurvived = math.floor(daysSurvived + 0.5)
-    return daysSurvived - WaterGoesBad.expirationDate
+    return daysSurvived - WaterGoesBad.expirationDay
 end
 
 
@@ -55,60 +45,6 @@ end
 ---@nodiscard
 function WaterGoesBad.isWaterExpired()
     return WaterGoesBad.daysSinceExpiration >= 0
-end
-
-
-function WaterGoesBad.updateDay()
-    local daysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration()
-    if daysSinceExpiration >= 0 and WaterGoesBad.daysSinceExpiration < 0 then
-        WaterGoesBad.onWaterExpired:trigger(true)
-    end
-    WaterGoesBad.daysSinceExpiration = daysSinceExpiration >= 0 and daysSinceExpiration or -1
-end
-
-Events.EveryDays.Add(WaterGoesBad.updateDay)
-
-
--- TODO: water loss could be made smoother than once a day, now that water amount isn't integer anyway
-
----Simulates a given number of days of drainage.
----@param fluidContainer FluidContainer The piped water object being drained.
----@param days number The number of days to simulate water drain of.
-function WaterGoesBad.drainContainer(fluidContainer, days)
-    local scale = fluidContainer:getCapacity() * 0.05 -- 20 = 1x
-    local amount = fluidContainer:getAmount()
-    local minWater = sandboxVars.MinimumWaterLeft * scale
-    if amount <= minWater then
-        return
-    end
-
-    local drainSpeed = (1 - WaterGoesBad.DRAIN_SPEED_VARIANCE * 0.5) + rand:random() * WaterGoesBad.DRAIN_SPEED_VARIANCE
-
-    amount = amount - sandboxVars.WaterReductionRate * scale * drainSpeed * days
-    if amount < minWater then
-        amount = minWater
-    end
-
-    fluidContainer:adjustAmount(amount)
-end
-
-
----Replaces all water in a container with tainted water.
----@param fluidContainer FluidContainer
-function WaterGoesBad.taintContainer(fluidContainer)
-    local waterAmount = fluidContainer:getSpecificFluidAmount(Fluid.Water)
-    fluidContainer:adjustSpecificFluidAmount(Fluid.Water, 0)
-
-    local locked = fluidContainer:isInputLocked()
-    if locked then
-        fluidContainer:setInputLocked(false)
-    end
-
-    fluidContainer:addFluid(FluidType.TaintedWater, waterAmount)
-
-    if locked then
-        fluidContainer:setInputLocked(true)
-    end
 end
 
 
@@ -143,21 +79,63 @@ function WaterGoesBad.createFluidContainerFor(object)
 end
 
 
+---Simulates a given number of days of drainage.
+---@param fluidContainer FluidContainer The piped water object being drained.
+---@param days number The number of days to simulate water drain of.
+function WaterGoesBad.drainContainer(fluidContainer, days)
+    local scale = fluidContainer:getCapacity() * 0.05 -- 20 = 1x
+    local amount = fluidContainer:getAmount()
+
+    local minWater = sandboxVars.MinimumWaterLeft * scale
+    if amount <= minWater then
+        return
+    end
+
+    local drainSpeed
+    if sandboxVars.WaterReductionRate == 20 then
+        drainSpeed = (1 - WaterGoesBad.DRAIN_SPEED_VARIANCE * 0.5) + rand:random() * WaterGoesBad.DRAIN_SPEED_VARIANCE
+    end
+
+    amount = amount - sandboxVars.WaterReductionRate * scale * drainSpeed * days
+    if amount < minWater then
+        amount = minWater
+    end
+
+    fluidContainer:adjustAmount(amount)
+end
+
+
+---Replaces all water in a container with tainted water.
+---@param fluidContainer FluidContainer
+function WaterGoesBad.taintContainer(fluidContainer)
+    local waterAmount = fluidContainer:getSpecificFluidAmount(Fluid.Water)
+    fluidContainer:adjustSpecificFluidAmount(Fluid.Water, 0)
+
+    local locked = fluidContainer:isInputLocked()
+    if locked then
+        fluidContainer:setInputLocked(false)
+    end
+
+    fluidContainer:addFluid(FluidType.TaintedWater, waterAmount)
+
+    if locked then
+        fluidContainer:setInputLocked(true)
+    end
+end
+
+
 ---Updates an object if it is required.
 ---@param object IsoObject The object to be updated.
 function WaterGoesBad.updateObject(object)
-    local modData = object:getModData()
-    if not modData.WaterGoesBad then
-        modData.WaterGoesBad = {
-            lastUpdateDay = 0
-        }
-    end
-    modData = modData.WaterGoesBad
+    local modData = object:getModData().WaterGoesBad
+
+    assert(modData ~= nil)
+    assert(object:hasComponent(ComponentType.FluidContainer))
 
     -- FIXME: check sprite property SpriteGridPos: if not 0,0, update the object there instead and copy result back to here
 
     local fluidContainer = object:getFluidContainer()
-    if modData.lastUpdateDay == 0 then
+    if modData.lastUpdateDay == -1 then
         WaterGoesBad.taintContainer(fluidContainer)
     end
 
@@ -174,27 +152,15 @@ function WaterGoesBad.updateObject(object)
 end
 
 
----@param square IsoGridSquare
-function WaterGoesBad.updateObjectsOnSquare(square)
-    local objects = square:getLuaTileObjectList() ---@as IsoObject[]
-    for i = 1, #objects do
-        local object = objects[i]
-        if WaterGoesBad.isPipedContainer(object) then
-            if not object:hasComponent(ComponentType.FluidContainer) then
-                GameEntityFactory.AddComponent(
-                    object,
-                    WaterGoesBad.createFluidContainerFor(object)
-                )
-            end
-
-            if WaterGoesBad.isWaterExpired() then
-                WaterGoesBad.updateObject(object)
-            end
-        end
+function WaterGoesBad.updateDay()
+    local daysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration()
+    if daysSinceExpiration >= 0 and WaterGoesBad.daysSinceExpiration < 0 then
+        WaterGoesBad.onWaterExpired:trigger(true)
     end
+    WaterGoesBad.daysSinceExpiration = daysSinceExpiration >= 0 and daysSinceExpiration or -1
 end
 
-Events.LoadGridsquare.Add(WaterGoesBad.updateObjectsOnSquare)
+Events.EveryDays.Add(WaterGoesBad.updateDay)
 
 
 function WaterGoesBad.init()
@@ -202,24 +168,23 @@ function WaterGoesBad.init()
 
     local modData = ModData.getOrCreate("WaterGoesBad")
 
-    local shutDate = SandboxVars.WaterShutModifier
-    shutDate = shutDate >= 0 and shutDate or 0 -- shut date can be -1, which is treated as zero
-    local minDate = shutDate + sandboxVars.ExpirationMin
-    local maxDate = shutDate + sandboxVars.ExpirationMax
+    local shutOffDay = math.max(SandboxVars.WaterShutModifier, 0) -- WaterShutModifier can be -1, which is treated as zero
+    local minDate = shutOffDay + sandboxVars.ExpirationMin
+    local maxDate = shutOffDay + sandboxVars.ExpirationMax
 
     ---@type integer
-    local expirationDate = modData.ExpirationDate
-    if not expirationDate or expirationDate > maxDate or expirationDate < minDate then
+    local expirationDay = modData.expirationDay
+    if not expirationDay or expirationDay > maxDate or expirationDay < minDate then
 
         if sandboxVars.ExpirationMax > sandboxVars.ExpirationMin then
-            expirationDate = rand:random(minDate, maxDate)
+            expirationDay = rand:random(minDate, maxDate)
         else
-            expirationDate = minDate
+            expirationDay = minDate
         end
 
-        modData.ExpirationDate = expirationDate
+        modData.expirationDay = expirationDay
     end
-    WaterGoesBad.expirationDate = expirationDate
+    WaterGoesBad.expirationDay = expirationDay
 
     WaterGoesBad.daysSinceExpiration = WaterGoesBad.calculateDaysSinceExpiration()
     if WaterGoesBad.daysSinceExpiration >= 0 then
