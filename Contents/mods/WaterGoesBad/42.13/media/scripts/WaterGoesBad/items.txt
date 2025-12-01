@@ -9,5 +9,6 @@ module WaterGoesBad {
         Icon = WaterGoesBad/TapFilter,
         StaticModel = WaterBottle,
         WorldStaticModel = WaterBottleEmpty,
+        Tooltip = Tooltip_WaterGoesBad_TapFilter,
     }
 }
