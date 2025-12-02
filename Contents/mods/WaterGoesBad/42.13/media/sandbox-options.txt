@@ -25,27 +25,20 @@ option WaterGoesBad.NeedFilterWater {
     translation = WaterGoesBad_NeedFilterWater,
 }
 
-option WaterGoesBad.ReduceWaterOverTime {
-    type = boolean,
-    default = true,
-    page = WaterGoesBad,
-    translation = WaterGoesBad_ReduceWaterOverTime,
-}
-
 option WaterGoesBad.WaterReductionRate {
     type = double,
-    max = 20,
-    min = 0.001,
-    default = 3,
+    max = 1,
+    min = 0,
+    default = 0.15,
     page = WaterGoesBad,
     translation = WaterGoesBad_WaterReductionRate,
 }
 
 option WaterGoesBad.MinimumWaterLeft {
-    type = integer,
-    max = 20,
+    type = double,
+    max = 1,
     min = 0,
-    default = 2,
+    default = 0.1,
     page = WaterGoesBad,
     translation = WaterGoesBad_MinimumWaterLeft,
 }

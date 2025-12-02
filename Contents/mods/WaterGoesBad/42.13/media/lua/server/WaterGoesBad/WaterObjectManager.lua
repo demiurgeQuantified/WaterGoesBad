@@ -30,7 +30,7 @@ WaterObjectManager.objects = {}
 ---@param fluidContainer FluidContainer The piped water object being drained.
 ---@param days number The number of days to simulate water drain of.
 function WaterObjectManager.drainContainer(fluidContainer, days)
-    local scale = fluidContainer:getCapacity() * 0.05 -- 20 = 1x
+    local scale = fluidContainer:getCapacity()
     local amount = fluidContainer:getAmount()
 
     local minWater = sandboxVars.MinimumWaterLeft * scale
@@ -39,7 +39,7 @@ function WaterObjectManager.drainContainer(fluidContainer, days)
     end
 
     local drainSpeed = sandboxVars.WaterReductionRate
-    if drainSpeed == 20 then
+    if drainSpeed == 1 then
         drainSpeed = 1
     else
         -- when more than one day's update is being applied this should probably be weighted towards the average
@@ -95,7 +95,7 @@ function WaterObjectManager.updateObject(object)
         return
     end
 
-    if sandboxVars.ReduceWaterOverTime then
+    if sandboxVars.WaterReductionRate > 0 then
         WaterObjectManager.drainContainer(fluidContainer, daysToSimulate)
     end
 
