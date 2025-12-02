@@ -2,14 +2,23 @@ if isClient() then
     return
 end
 
+
+local EntityHandle = require("Starlit/EntityHandle")
+
 local WaterGoesBad = require("WaterGoesBad/WaterGoesBad")
 
 
--- TODO: we could keep track of all loaded water objects and update them periodically instead of only when loading
-
+---Tracks and updates loaded water objects.
 local WaterObjectManager = {}
 
+---Objects registered with the object manager.
+---Objects are added as soon as they load, but may remain in the list for some time after unloading.
+---@type starlit.EntityHandle[]
+WaterObjectManager.objects = {}
 
+
+---Initialises an object after it has loaded.
+---Should not assume that the object has not been initialised before.
 ---@param object IsoObject
 function WaterObjectManager.initialiseObject(object)
     local modData = object:getModData()
@@ -28,9 +37,46 @@ function WaterObjectManager.initialiseObject(object)
 end
 
 
+---Updates all loaded objects.
+function WaterObjectManager.update()
+    -- may want to consider spreading this over a couple ticks, but there shouldn't be many objects at once anyway
+    
+    -- remove removed objects
+    for i = #WaterObjectManager.objects, 1, -1 do
+        local object = WaterObjectManager.objects[i]
+        if object:isEmpty() then
+            table.remove(WaterObjectManager.objects, i)
+        end
+    end
+
+    -- update remaining objects if the water is expired
+    if WaterGoesBad.isWaterExpired() then
+        for i = 1, #WaterObjectManager.objects do
+            local object = WaterObjectManager.objects[i]
+            WaterGoesBad.updateObject(object:get())
+        end
+    end
+end
+
+
+---@param firstTime boolean
+local function onWaterExpired(firstTime)
+    if firstTime then
+        -- if false, the event was fired because the game just reloaded, so there aren't any objects anyway
+        WaterObjectManager.update()
+    end
+    Events.EveryDays.Add(WaterObjectManager.update)
+end
+
+
+WaterGoesBad.onWaterExpired:addListener(onWaterExpired)
+
+
+---Adds an object and initialises it.
 ---@param object IsoObject
-function WaterObjectManager.objectAdded(object)
+function WaterObjectManager.addObject(object)
     WaterObjectManager.initialiseObject(object)
+    WaterObjectManager.objects[#WaterObjectManager.objects + 1] = EntityHandle.get(object)
 
     if WaterGoesBad.isWaterExpired() then
         WaterGoesBad.updateObject(object)
@@ -44,7 +90,7 @@ local function waterObjectLoaded(object)
         return
     end
 
-    WaterObjectManager.objectAdded(object)
+    WaterObjectManager.addObject(object)
 end
 
 

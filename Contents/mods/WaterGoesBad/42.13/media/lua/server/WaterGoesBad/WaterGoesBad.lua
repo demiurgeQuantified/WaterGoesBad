@@ -151,6 +151,8 @@ function WaterGoesBad.updateObject(object)
         WaterGoesBad.drainContainer(fluidContainer, daysToSimulate)
     end
 
+    object:sync()
+
     modData.lastUpdateDay = WaterGoesBad.daysSinceExpiration
 end
 
