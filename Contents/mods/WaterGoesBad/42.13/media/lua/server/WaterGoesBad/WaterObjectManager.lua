@@ -4,6 +4,7 @@ end
 
 
 local EntityHandle = require("Starlit/EntityHandle")
+local TaskManager = require("Starlit/TaskManager")
 
 local ExpirationManager = require("WaterGoesBad/ExpirationManager")
 
@@ -23,10 +24,16 @@ WaterObjectManager.DRAIN_SPEED = 1 / 24
 ---Percentage by which drain speed can vary per tap
 WaterObjectManager.DRAIN_SPEED_VARIANCE = 0.4
 
+---Maximum number of objects to update per tick.
+WaterObjectManager.MAX_OBJECT_UPDATES_PER_TICK = 128
+
 ---Objects registered with the object manager.
 ---Objects are added as soon as they load, but may remain in the list for some time after unloading.
+---
+---Be careful when modifying this: if elements are removed or reordered while the update coroutine is running,
+---it may crash or not update all objects successfully.
 ---@type starlit.EntityHandle[]
-WaterObjectManager.objects = {}
+local objects = {}
 
 
 ---Simulates a given number of hours of drainage.
@@ -110,29 +117,55 @@ end
 
 
 ---Updates all loaded objects.
-function WaterObjectManager.update()
-    -- may want to consider spreading this over a couple ticks, but there shouldn't be many objects at once anyway
-    
-    -- remove removed objects
-    for i = #WaterObjectManager.objects, 1, -1 do
-        local object = WaterObjectManager.objects[i]
-        if object:isEmpty() then
-            table.remove(WaterObjectManager.objects, i)
+---@return starlit.TaskManager.TaskResult result
+---@async
+local function update()
+    local highIndex = #objects
+
+    while true do
+        local lowIndex = math.max(highIndex - WaterObjectManager.MAX_OBJECT_UPDATES_PER_TICK, 1)
+
+        -- remove unloaded objects in range
+        for i = highIndex, lowIndex, -1 do
+            local object = objects[i]
+            if object:isEmpty() then
+                table.remove(objects, i)
+                highIndex = highIndex - 1
+            end
         end
+
+        -- update remaining objects if the water is expired
+        if ExpirationManager.isWaterExpired() then
+            print(lowIndex, highIndex)
+            for i = lowIndex, highIndex do
+                local object = objects[i]
+                WaterObjectManager.updateObject(object:get())
+            end
+        end
+
+        highIndex = lowIndex - 1
+        if highIndex <= 0 then
+           break
+        end
+
+        coroutine.yield(TaskManager.TaskResult.CONTINUE)
     end
 
-    -- update remaining objects if the water is expired
-    if ExpirationManager.isWaterExpired() then
-        for i = 1, #WaterObjectManager.objects do
-            local object = WaterObjectManager.objects[i]
-            WaterObjectManager.updateObject(object:get())
-        end
-    end
+    return TaskManager.TaskResult.DONE
 end
 
 
+---Updates all loaded objects over the next few ticks.
+function WaterObjectManager.startUpdate()
+    TaskManager.addTask(
+        coroutine.wrap(update)
+    )
+end
+
+
+---Creates a FluidContainer appropriate for an object.
 ---@param object IsoObject
----@return FluidContainer
+---@return FluidContainer fluidContainer
 ---@nodiscard
 function WaterObjectManager.createFluidContainerFor(object)
     local fluidContainer = ComponentType.FluidContainer:CreateComponent() ---@as FluidContainer
@@ -189,7 +222,7 @@ end
 ---@param object IsoObject
 function WaterObjectManager.addObject(object)
     WaterObjectManager.initialiseObject(object)
-    WaterObjectManager.objects[#WaterObjectManager.objects + 1] = EntityHandle.get(object)
+    objects[#objects + 1] = EntityHandle.get(object)
 
     if ExpirationManager.isWaterExpired() then
         WaterObjectManager.updateObject(object)
@@ -201,9 +234,9 @@ end
 local function onWaterExpired(firstTime)
     if firstTime then
         -- if false, the event was fired because the game just reloaded, so there aren't any objects anyway
-        WaterObjectManager.update()
+        WaterObjectManager.startUpdate()
     end
-    Events.EveryHours.Add(WaterObjectManager.update)
+    Events.EveryHours.Add(WaterObjectManager.startUpdate)
 end
 
 
