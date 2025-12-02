@@ -29,7 +29,8 @@ WaterGoesBad.DRAIN_SPEED_VARIANCE = 0.4
 ---Event triggered when water expires.
 ---It passes a single boolean argument. This will be true when the water is just expiring,
 ---and false when the water was already expired (the game was restarted after expiration)
-WaterGoesBad.onWaterExpired = LuaEvent.new()
+---@type starlit.LuaEvent<boolean>
+WaterGoesBad.onWaterExpired = LuaEvent.new() ---@as starlit.LuaEvent<boolean>
 
 
 ---@return integer
@@ -91,8 +92,10 @@ function WaterGoesBad.drainContainer(fluidContainer, days)
         return
     end
 
-    local drainSpeed
-    if sandboxVars.WaterReductionRate == 20 then
+    local drainSpeed = sandboxVars.WaterReductionRate
+    if drainSpeed == 20 then
+        drainSpeed = 1
+    else
         drainSpeed = (1 - WaterGoesBad.DRAIN_SPEED_VARIANCE * 0.5) + rand:random() * WaterGoesBad.DRAIN_SPEED_VARIANCE
     end
 
