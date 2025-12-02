@@ -9,6 +9,9 @@ local TaskManager = require("Starlit/TaskManager")
 local ExpirationManager = require("WaterGoesBad/ExpirationManager")
 
 
+local TASK_CHAIN = "WaterGoesBad.WaterObjectManager"
+TaskManager.addTaskChain(TASK_CHAIN)
+
 ---@diagnostic disable-next-line: undefined-field
 local sandboxVars = SandboxVars.WaterGoesBad ---@as table
 
@@ -117,8 +120,8 @@ end
 
 
 ---Updates all loaded objects.
----@return starlit.TaskManager.TaskResult result
 ---@async
+---@return starlit.TaskManager.TaskResult result
 local function update()
     local highIndex = #objects
 
@@ -136,7 +139,6 @@ local function update()
 
         -- update remaining objects if the water is expired
         if ExpirationManager.isWaterExpired() then
-            print(lowIndex, highIndex)
             for i = lowIndex, highIndex do
                 local object = objects[i]
                 WaterObjectManager.updateObject(object:get())
@@ -155,9 +157,17 @@ local function update()
 end
 
 
+local updateTask = ""
+
 ---Updates all loaded objects over the next few ticks.
 function WaterObjectManager.startUpdate()
-    TaskManager.addTask(
+    -- cancel the currently running update if there is one
+    if TaskManager.hasTask(TASK_CHAIN, updateTask) then
+        TaskManager.removeTask(TASK_CHAIN, updateTask)
+    end
+
+    updateTask = TaskManager.addTask(
+        TASK_CHAIN,
         coroutine.wrap(update)
     )
 end
@@ -236,6 +246,7 @@ local function onWaterExpired(firstTime)
         -- if false, the event was fired because the game just reloaded, so there aren't any objects anyway
         WaterObjectManager.startUpdate()
     end
+
     Events.EveryHours.Add(WaterObjectManager.startUpdate)
 end
 
