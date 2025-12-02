@@ -1,7 +1,6 @@
 VERSION = 1,
 
-option WaterGoesBad.ExpirationMin
-{
+option WaterGoesBad.ExpirationMin {
     type = integer,
     max = 365,
     min = 0,
@@ -10,8 +9,7 @@ option WaterGoesBad.ExpirationMin
     translation = WaterGoesBad_ExpirationMin,
 }
 
-option WaterGoesBad.ExpirationMax
-{
+option WaterGoesBad.ExpirationMax {
     type = integer,
     max = 365,
     min = 0,
@@ -20,38 +18,43 @@ option WaterGoesBad.ExpirationMax
     translation = WaterGoesBad_ExpirationMax,
 }
 
-option WaterGoesBad.NeedFilterWater
-{
+option WaterGoesBad.NeedFilterWater {
     type = boolean,
     default = true,
     page = WaterGoesBad,
     translation = WaterGoesBad_NeedFilterWater,
 }
 
-option WaterGoesBad.ReduceWaterOverTime
-{
+option WaterGoesBad.ReduceWaterOverTime {
     type = boolean,
     default = true,
     page = WaterGoesBad,
     translation = WaterGoesBad_ReduceWaterOverTime,
 }
 
-option WaterGoesBad.WaterReductionRate
-{
+option WaterGoesBad.WaterReductionRate {
     type = double,
     max = 20,
-    min = 1,
+    min = 0.001,
     default = 3,
     page = WaterGoesBad,
     translation = WaterGoesBad_WaterReductionRate,
 }
 
-option WaterGoesBad.MinimumWaterLeft
-{
+option WaterGoesBad.MinimumWaterLeft {
     type = integer,
     max = 20,
     min = 0,
     default = 2,
     page = WaterGoesBad,
     translation = WaterGoesBad_MinimumWaterLeft,
+}
+
+option WaterGoesBad.TapSizeScalar {
+    type = double,
+    default = 0.2,
+    min = 0.05,
+    max = 100,
+    page = WaterGoesBad,
+    translation = WaterGoesBad_TapSizeScalar,
 }

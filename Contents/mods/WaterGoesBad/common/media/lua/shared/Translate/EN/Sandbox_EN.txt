@@ -14,4 +14,7 @@ Sandbox_EN = {
     Sandbox_WaterGoesBad_WaterReductionRate_tooltip = "How much water will be removed from the taps per day, in litres. This value is scaled up for larger containers. Individual taps will have slight random variance from this value. If set to 20, all taps will be empty immediately when the water shuts off.",
     Sandbox_WaterGoesBad_MinimumWaterLeft = "Minimum Remaining Water",
     Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip = "Amount of water, in litres, that will not be removed from taps by draining.",
+
+    Sandbox_WaterGoesBad_TapSizeScalar = "Tap Capacity Multiplier",
+    Sandbox_WaterGoesBad_TapSizeScalar_tooltip = "Multiplier to the water capacity of taps. Does not affect other liquid containers. <LINE> Changing this mid-save does not change the capacity of already loaded taps.",
 }

@@ -145,6 +145,9 @@ function WaterObjectManager.createFluidContainerFor(object)
         or tonumber(spriteProperties:get(IsoPropertyType.MaximumWaterAmount))
         or water
     
+    water = water * sandboxVars.TapSizeScalar
+    maxWater = maxWater * sandboxVars.TapSizeScalar
+    
     if object:getSquare():isNoWater() then
         water = 0
     end
