@@ -23,10 +23,10 @@ local ExpirationManager = {}
 ---@type integer
 ExpirationManager.expirationDay = -1
 
----Days that have passed since the water expired.
+---Hours that have passed since the water expired.
 ---If negative, water has not expired yet.
 ---@type integer
-ExpirationManager.daysSinceExpiration = 0
+ExpirationManager.hoursSinceExpiration = 0
 
 
 ---Event triggered when water expires.
@@ -36,39 +36,47 @@ ExpirationManager.daysSinceExpiration = 0
 ExpirationManager.onWaterExpired = LuaEvent.new() ---@as starlit.LuaEvent<boolean>
 
 
----Returns the number of days since expiration.
----It is usually better to read :lua:data:`expirationDay`.
----@return integer days
+---Returns the time in hours that the water will expire.
+---@return integer expirationTime Time in hours that the water will expire relative to the start time of the world.
 ---@nodiscard
-function ExpirationManager.calculateDaysSinceExpiration()
-    local daysSurvived = gameTime:getWorldAgeHours() / 24
-    daysSurvived = math.floor(daysSurvived + 0.5)
-    return daysSurvived - ExpirationManager.expirationDay
+function ExpirationManager.getExpirationTimeHours()
+    return ExpirationManager.expirationDay * 24 - math.floor(gameTime:getStartTimeOfDay())
 end
+
+
+---Returns the number of hours since expiration.
+---It is usually better to read :lua:data:`hoursSinceExpiration`.
+---@return integer hours
+---@nodiscard
+function ExpirationManager.calculateHoursSinceExpiration()
+    local worldAgeHours = gameTime:getWorldAgeHours() - (gameTime:getStartTimeOfDay() - 7)
+    return math.floor(worldAgeHours - ExpirationManager.getExpirationTimeHours())
+end
+
 
 
 ---Returns true if the water has expired.
 ---@return boolean expired
 ---@nodiscard
 function ExpirationManager.isWaterExpired()
-    return ExpirationManager.daysSinceExpiration >= 0
+    return ExpirationManager.hoursSinceExpiration >= 0
 end
 
 
 local function update()
-    local daysSinceExpiration = ExpirationManager.calculateDaysSinceExpiration()
+    local hoursSinceExpiration = ExpirationManager.calculateHoursSinceExpiration()
 
     -- necessary to delay trigger so that daysSinceExpiration is set during event
-    local triggerEvent = daysSinceExpiration >= 0 and ExpirationManager.daysSinceExpiration < 0
+    local triggerEvent = hoursSinceExpiration >= 0 and ExpirationManager.hoursSinceExpiration < 0
 
-    ExpirationManager.daysSinceExpiration = daysSinceExpiration >= 0 and daysSinceExpiration or -1
+    ExpirationManager.hoursSinceExpiration = hoursSinceExpiration >= 0 and hoursSinceExpiration or -1
 
     if triggerEvent then
         ExpirationManager.onWaterExpired:trigger(true)
     end
 end
 
-Events.EveryDays.Add(update)
+Events.EveryHours.Add(update)
 
 
 function ExpirationManager.init()
@@ -94,8 +102,8 @@ function ExpirationManager.init()
     end
     ExpirationManager.expirationDay = expirationDay
 
-    ExpirationManager.daysSinceExpiration = ExpirationManager.calculateDaysSinceExpiration()
-    if ExpirationManager.daysSinceExpiration >= 0 then
+    ExpirationManager.hoursSinceExpiration = ExpirationManager.calculateHoursSinceExpiration()
+    if ExpirationManager.hoursSinceExpiration >= 0 then
         ExpirationManager.onWaterExpired:trigger(false)
     end
 end

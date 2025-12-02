@@ -17,6 +17,9 @@ local rand = newrandom()
 ---Tracks and updates loaded water objects.
 local WaterObjectManager = {}
 
+---Drainage speed multiplier applied on top of the sandbox option.
+WaterObjectManager.DRAIN_SPEED = 1 / 24
+
 ---Percentage by which drain speed can vary per tap
 WaterObjectManager.DRAIN_SPEED_VARIANCE = 0.4
 
@@ -26,10 +29,10 @@ WaterObjectManager.DRAIN_SPEED_VARIANCE = 0.4
 WaterObjectManager.objects = {}
 
 
----Simulates a given number of days of drainage.
+---Simulates a given number of hours of drainage.
 ---@param fluidContainer FluidContainer The piped water object being drained.
----@param days number The number of days to simulate water drain of.
-function WaterObjectManager.drainContainer(fluidContainer, days)
+---@param hours number The number of hours to simulate water drain of.
+function WaterObjectManager.drainContainer(fluidContainer, hours)
     local scale = fluidContainer:getCapacity()
     local amount = fluidContainer:getAmount()
 
@@ -42,12 +45,13 @@ function WaterObjectManager.drainContainer(fluidContainer, days)
     if drainSpeed == 1 then
         drainSpeed = 1
     else
-        -- when more than one day's update is being applied this should probably be weighted towards the average
+        -- when more than one hour's update is being applied this should probably be weighted towards the average
         -- but i don't really know the maths so this is fine
         drainSpeed = (1 - WaterObjectManager.DRAIN_SPEED_VARIANCE * 0.5) + rand:random() * WaterObjectManager.DRAIN_SPEED_VARIANCE
+        drainSpeed = drainSpeed * WaterObjectManager.DRAIN_SPEED
     end
 
-    amount = amount - sandboxVars.WaterReductionRate * scale * drainSpeed * days
+    amount = amount - sandboxVars.WaterReductionRate * scale * drainSpeed * hours
     if amount < minWater then
         amount = minWater
     end
@@ -86,22 +90,22 @@ function WaterObjectManager.updateObject(object)
     -- FIXME: check sprite property SpriteGridPos: if not 0,0, update the object there instead and copy result back to here
 
     local fluidContainer = object:getFluidContainer()
-    if modData.lastUpdateDay == -1 then
+    if modData.lastUpdateHours == -1 then
         WaterObjectManager.taintContainer(fluidContainer)
     end
 
-    local daysToSimulate = ExpirationManager.daysSinceExpiration - modData.lastUpdateDay
-    if daysToSimulate <= 0 then
+    local hoursToSimulate = ExpirationManager.hoursSinceExpiration - modData.lastUpdateHours
+    if hoursToSimulate <= 0 then
         return
     end
 
     if sandboxVars.WaterReductionRate > 0 then
-        WaterObjectManager.drainContainer(fluidContainer, daysToSimulate)
+        WaterObjectManager.drainContainer(fluidContainer, hoursToSimulate)
     end
 
     object:sync()
 
-    modData.lastUpdateDay = ExpirationManager.daysSinceExpiration
+    modData.lastUpdateHours = ExpirationManager.hoursSinceExpiration
 end
 
 
@@ -168,7 +172,7 @@ function WaterObjectManager.initialiseObject(object)
     local modData = object:getModData()
     if not modData.WaterGoesBad then
         modData.WaterGoesBad = {
-            lastUpdateDay = -1
+            lastUpdateHours = -1
         }
     end
 
@@ -199,7 +203,7 @@ local function onWaterExpired(firstTime)
         -- if false, the event was fired because the game just reloaded, so there aren't any objects anyway
         WaterObjectManager.update()
     end
-    Events.EveryDays.Add(WaterObjectManager.update)
+    Events.EveryHours.Add(WaterObjectManager.update)
 end
 
 
