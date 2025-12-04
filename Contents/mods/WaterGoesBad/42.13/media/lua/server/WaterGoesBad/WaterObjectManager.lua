@@ -35,8 +35,8 @@ WaterObjectManager.MAX_OBJECT_UPDATES_PER_TICK = 128
 ---
 ---Be careful when modifying this: if elements are removed or reordered while the update coroutine is running,
 ---it may crash or not update all objects successfully.
----@type starlit.EntityHandle[]
-local objects = {}
+---@type starlit.EntityHandle<IsoObject>[]
+local objects = table.newarray()
 
 
 ---Simulates a given number of hours of drainage.
@@ -121,27 +121,25 @@ end
 
 ---Updates all loaded objects.
 ---@async
----@return starlit.TaskManager.TaskResult result
+---@return starlit.taskmanager.TaskResult result
 local function update()
     local highIndex = #objects
+
+    -- this won't change during an update
+    local doObjectUpdates = ExpirationManager.isWaterExpired()
 
     while true do
         local lowIndex = math.max(highIndex - WaterObjectManager.MAX_OBJECT_UPDATES_PER_TICK, 1)
 
         -- remove unloaded objects in range
         for i = highIndex, lowIndex, -1 do
-            local object = objects[i]
-            if object:isEmpty() then
+            local object = objects[i]:get()
+            if object then
+                if doObjectUpdates then
+                    WaterObjectManager.updateObject(object)
+                end
+            else
                 table.remove(objects, i)
-                highIndex = highIndex - 1
-            end
-        end
-
-        -- update remaining objects if the water is expired
-        if ExpirationManager.isWaterExpired() then
-            for i = lowIndex, highIndex do
-                local object = objects[i]
-                WaterObjectManager.updateObject(object:get())
             end
         end
 
