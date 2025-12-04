@@ -172,6 +172,8 @@ function WaterObjectManager.startUpdate()
     )
 end
 
+Events.EveryHours.Add(WaterObjectManager.startUpdate)
+
 
 ---Creates a FluidContainer appropriate for an object.
 ---@param object IsoObject
@@ -242,14 +244,13 @@ end
 
 ---@param firstTime boolean
 local function onWaterExpired(firstTime)
-    if firstTime then
-        -- if false, the event was fired because the game just reloaded, so there aren't any objects anyway
-        WaterObjectManager.startUpdate()
+    if not firstTime then
+        -- the event was fired because the game just reloaded, so there aren't any objects anyway
+        return
     end
 
-    Events.EveryHours.Add(WaterObjectManager.startUpdate)
+    WaterObjectManager.startUpdate()
 end
-
 
 ExpirationManager.onWaterExpired:addListener(onWaterExpired)
 
