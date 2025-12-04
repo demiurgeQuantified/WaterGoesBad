@@ -9,8 +9,7 @@ local TaskManager = require("Starlit/TaskManager")
 local ExpirationManager = require("WaterGoesBad/ExpirationManager")
 
 
-local TASK_CHAIN = "WaterGoesBad.WaterObjectManager"
-TaskManager.addTaskChain(TASK_CHAIN)
+local taskChain = TaskManager.addTaskChain("watergoesbad.waterobjectmanager")
 
 ---@diagnostic disable-next-line: undefined-field
 local sandboxVars = SandboxVars.WaterGoesBad ---@as table
@@ -28,7 +27,7 @@ WaterObjectManager.DRAIN_SPEED = 1 / 24
 WaterObjectManager.DRAIN_SPEED_VARIANCE = 0.4
 
 ---Maximum number of objects to update per tick.
-WaterObjectManager.MAX_OBJECT_UPDATES_PER_TICK = 128
+WaterObjectManager.MAX_OBJECT_UPDATES_PER_TICK = 64
 
 ---Objects registered with the object manager.
 ---Objects are added as soon as they load, but may remain in the list for some time after unloading.
@@ -155,17 +154,17 @@ local function update()
 end
 
 
-local updateTask = ""
+---@type starlit.taskmanager.Task?
+local updateTask = nil
 
 ---Updates all loaded objects over the next few ticks.
 function WaterObjectManager.startUpdate()
     -- cancel the currently running update if there is one
-    if TaskManager.hasTask(TASK_CHAIN, updateTask) then
-        TaskManager.removeTask(TASK_CHAIN, updateTask)
+    if taskChain:hasTask(updateTask) then
+        taskChain:removeTask(updateTask)
     end
 
-    updateTask = TaskManager.addTask(
-        TASK_CHAIN,
+    updateTask = taskChain:addTask(
         coroutine.wrap(update)
     )
 end
