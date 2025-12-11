@@ -1,6 +1,6 @@
 version=1
 id=2849467715
-title=[42MP] Water Goes Bad
+title=[42] Water Goes Bad
 description=[h1]Water Goes Bad[/h1]
 description=This mod makes the water still stored in sinks, baths, etc after the water shutoff become unsafe to drink after a customisable amount of time. Off-grid water containers, such as water dispensers, stored water containers, and player plumbed sinks are not affected.
 description=This aims to make keeping track of water more engaging. In Vanilla, stored-up water leaves a near infinite supply of easy safe water even after the water shutoff, making keeping up with thirst trivial.
