@@ -1,0 +1,3 @@
+ItemName_PTBR = {
+ItemName_WaterGoesBad.TapFilter = "Filtro de Torneira",
+}

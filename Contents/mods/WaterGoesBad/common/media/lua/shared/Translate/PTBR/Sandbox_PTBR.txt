@@ -1,0 +1,21 @@
+Sandbox_PTBR = {
+Sandbox_WaterGoesBad = "Water Goes Bad (Água Parada)",
+Sandbox_WaterGoesBad_ExpirationMin = "Mínimo de Dias Antes da Água Ficar Má",
+Sandbox_WaterGoesBad_ExpirationMin_tooltip = "Em dias, após quantos dias mínimos a água pode ficar má. A contagem só começa depois que o abastecimento de água é cortado.",
+Sandbox_WaterGoesBad_ExpirationMax = "Máximo de Dias Antes da Água Ficar Má",
+Sandbox_WaterGoesBad_ExpirationMax_tooltip = "Em dias, após quantos dias máximos a água pode ficar má. A contagem só começa depois que o abastecimento de água é cortado.",
+
+Sandbox_WaterGoesBad_NeedFilterWater = "Pias com Encanamento Precisam de Filtros",
+Sandbox_WaterGoesBad_NeedFilterWater_tooltip = "Os jogadores devem adicionar filtros às suas pias com encanamento para limpar a água. Caso contrário, a água das pias com encanamento é sempre segura, mesmo que a fonte de água não seja (como no jogo base).",
+
+Sandbox_WaterGoesBad_ReduceWaterOverTime = "Drenar Água ao Longo do Tempo",
+Sandbox_WaterGoesBad_ReduceWaterOverTime_tooltip = "Após o corte de água, a água será drenada das torneiras.",
+Sandbox_WaterGoesBad_WaterReductionRate = "Taxa de Drenagem de Água",
+Sandbox_WaterGoesBad_WaterReductionRate_tooltip = "Quanta água será retirada das torneiras por dia.",
+Sandbox_WaterGoesBad_WaterReductionChance = "Chance de Drenagem de Água",
+Sandbox_WaterGoesBad_WaterReductionChance_tooltip = "Chance, por dia, de a água ser removida, adicionando variação.",
+Sandbox_WaterGoesBad_MinimumWaterLeft = "Água Mínima Restante",
+Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip = "Quantidade de água que não será removida das torneiras por drenagem.",
+Sandbox_WaterGoesBad_ScaleWaterLoss = "Perda Proporcional de Água",
+Sandbox_WaterGoesBad_ScaleWaterLoss_tooltip = "Recipientes de água maiores, como banheiras, perdem água mais rapidamente do que pias.",
+}

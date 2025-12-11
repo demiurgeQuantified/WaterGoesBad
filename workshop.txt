@@ -14,5 +14,6 @@ description=
 description=[h1]Translation Credits[/h1]
 description=Italian translation by [url=https://steamcommunity.com/id/Art_Tippet]Art Tippet[/url]
 description=Russian translation by [url=https://steamcommunity.com/profiles/76561198100076306]Niko_216[/url]
+description=Brazilian Portuguese translation by [url=https://steamcommunity.com/profiles/76561199071148613]Guicsr_[/url]
 tags=Build 41;Build 42;Balance;Hardmode;Misc;Multiplayer;Realistic
 visibility=public
