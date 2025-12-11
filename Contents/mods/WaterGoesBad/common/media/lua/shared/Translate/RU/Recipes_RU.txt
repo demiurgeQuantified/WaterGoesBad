@@ -1,0 +1,3 @@
+Recipes_RU = {
+Recipe_Make_Tap_Filter = "Создать фильтр",
+}

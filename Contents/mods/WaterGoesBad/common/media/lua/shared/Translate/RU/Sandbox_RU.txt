@@ -1,0 +1,21 @@
+Sandbox_RU = {
+Sandbox_WaterGoesBad = "Портится ли вода",
+Sandbox_WaterGoesBad_ExpirationMin = "Минимальное время до порчи воды (дни)",
+Sandbox_WaterGoesBad_ExpirationMin_tooltip = "Минимальное количество дней до порчи воды. Отсчёт начинается после отключения водоснабжения.",
+Sandbox_WaterGoesBad_ExpirationMax = "Максимальное время до порчи воды (дни)",
+Sandbox_WaterGoesBad_ExpirationMax_tooltip = "Максимальное количество дней до порчи воды. Отсчёт начинается после отключения водоснабжения.",
+
+Sandbox_WaterGoesBad_NeedFilterWater = "Фильтры для подключённых раковин",
+Sandbox_WaterGoesBad_NeedFilterWater_tooltip = "Требует установки фильтров для очистки воды в подключённых раковинах. Если выключено — вода в них всегда безопасна (как в оригинале).",
+
+Sandbox_WaterGoesBad_ReduceWaterOverTime = "Постепенный дренаж воды",
+Sandbox_WaterGoesBad_ReduceWaterOverTime_tooltip = "После отключения воды её уровень в кранах будет постепенно снижаться.",
+Sandbox_WaterGoesBad_WaterReductionRate = "Скорость дренажа",
+Sandbox_WaterGoesBad_WaterReductionRate_tooltip = "Количество воды, исчезающей из кранов за день (в единицах).",
+Sandbox_WaterGoesBad_WaterReductionChance = "Шанс дренажа",
+Sandbox_WaterGoesBad_WaterReductionChance_tooltip = "Ежедневный шанс уменьшения уровня воды (для вариативности).",
+Sandbox_WaterGoesBad_MinimumWaterLeft = "Минимальный остаток воды",
+Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip = "Неизменный минимум воды, который останется в системе.",
+Sandbox_WaterGoesBad_ScaleWaterLoss = "Пропорциональная потеря воды",
+Sandbox_WaterGoesBad_ScaleWaterLoss_tooltip = "Крупные ёмкости (например, ванны) теряют воду быстрее, чем раковины.",
+}
