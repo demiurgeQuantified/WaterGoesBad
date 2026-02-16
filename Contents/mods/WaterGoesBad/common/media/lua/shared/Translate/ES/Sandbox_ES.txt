@@ -1,0 +1,18 @@
+Sandbox_ES = {
+    Sandbox_WaterGoesBad = "El agua se echa a perder",
+    Sandbox_WaterGoesBad_ExpirationMin = "Días mínimos hasta que el agua se echa a perder",
+    Sandbox_WaterGoesBad_ExpirationMin_tooltip = "En días, el tiempo mínimo que el agua puede estropearse. Esto solo empieza a contar después del corte de agua.",
+    Sandbox_WaterGoesBad_ExpirationMax = "Días máximos hasta que el agua se echa a perder",
+    Sandbox_WaterGoesBad_ExpirationMax_tooltip = "En días, el agua puede echarse a perder como máximo. Esto solo empieza a contar después del corte de agua.",
+
+    Sandbox_WaterGoesBad_NeedFilterWater = "Los fregaderos con tuberías necesitan filtros.",
+    Sandbox_WaterGoesBad_NeedFilterWater_tooltip = "Los jugadores deben añadir filtros a sus fregaderos conectados al alcantarillado para limpiar el agua. De lo contrario, los fregaderos conectados al alcantarillado siempre proporcionan agua segura, incluso si su fuente de agua no lo es (como en vanilla)..",
+
+    Sandbox_WaterGoesBad_WaterReductionRate = "Tasa de drenaje de agua",
+    Sandbox_WaterGoesBad_WaterReductionRate_tooltip = "¿Cuánta agua se extraerá de los grifos al día como fracción de su almacenamiento total? Este valor se incrementa para contenedores más grandes. Los grifos individuales tendrán una ligera variación aleatoria con respecto a este valor. <LINE> Si se establece en 1, todos los grifos se vaciarán inmediatamente cuando se cierre el agua. <LINE> Si se establece en 0, el agua no se drenará.",
+    Sandbox_WaterGoesBad_MinimumWaterLeft = "Agua mínima restante",
+    Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip = "Cantidad de agua que no se eliminará de los grifos mediante el drenaje como fracción de su almacenamiento total.",
+
+    Sandbox_WaterGoesBad_TapSizeScalar = "Multiplicador de capacidad de grifo",
+    Sandbox_WaterGoesBad_TapSizeScalar_tooltip = "Multiplicador de la capacidad de agua de los grifos. No afecta a otros recipientes de líquidos. <LINE> Cambiar esto durante el guardado no modifica la capacidad de los grifos ya cargados.",
+}
