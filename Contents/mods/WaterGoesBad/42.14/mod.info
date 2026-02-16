@@ -5,6 +5,6 @@ poster=wgb.png
 author=albion
 require=\StarlitLibrary
 url=https://github.com/demiurgeQuantified/WaterGoesBad
-modversion=3.0.1
+modversion=3.0.2
 versionMin=42.14.0
 icon=wgbmini.png
