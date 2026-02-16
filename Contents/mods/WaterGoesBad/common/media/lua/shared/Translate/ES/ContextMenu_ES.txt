@@ -1,0 +1,4 @@
+ContextMenu_ES = {
+    ContextMenu_WaterGoesBad_AddFilter = "Añadir filtro de agua",
+    ContextMenu_WaterGoesBad_RemoveFilter = "Quitar el filtro de agua",
+}
