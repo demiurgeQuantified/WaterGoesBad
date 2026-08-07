@@ -9,9 +9,9 @@
     "Sandbox_WaterGoesBad_NeedFilterWater_tooltip": "Players must add filters to their plumbed sinks to clean the water. Otherwise, plumbed sinks are always safe water, even if their water source isn't (like vanilla).",
 
     "Sandbox_WaterGoesBad_WaterReductionRate": "Water Drain Rate",
-    "Sandbox_WaterGoesBad_WaterReductionRate_tooltip": "How much water will be removed from the taps per day as a fraction of their total storage. This value is scaled up for larger containers. Individual taps will have slight random variance from this value. <LINE> If set to 1, all taps will be empty immediately when the water shuts off. <LINE> If set to 0, water will not drain.",
+    "Sandbox_WaterGoesBad_WaterReductionRate_tooltip": "How much water will be removed from each tap per day as a fraction of their total capacity. For example, if this value is 0.2, a tap will lose 20%% of its maximum water each day. Individual taps will have slight random variance from this value. <LINE> If set to 1, all taps will reach their minimum value immediately when the water shuts off. <LINE> If set to 0, water will not drain.",
     "Sandbox_WaterGoesBad_MinimumWaterLeft": "Minimum Remaining Water",
-    "Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip": "Amount of water that will not be removed from taps by draining as a fraction of their total storage.",
+    "Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip": "Amount of water that will not be drained from taps by as a fraction of their total capacity. For example, if this value is 0.2, a tap will not drain past 20%% of its total capacity.",
 
     "Sandbox_WaterGoesBad_TapSizeScalar": "Tap Capacity Multiplier",
     "Sandbox_WaterGoesBad_TapSizeScalar_tooltip": "Multiplier to the water capacity of taps. Does not affect other liquid containers. <LINE> Changing this mid-save does not change the capacity of already loaded taps."
