@@ -268,8 +268,8 @@ local function addWaterObjectListener(spriteManager)
     local waterObjectSprites = table.newarray()
 
     ---@type table<string, IsoSprite>
-    ---@diagnostic disable-next-line: undefined-field
-    local sprites = transformIntoKahluaTable(spriteManager.namedMap --[[@as HashMap<string, IsoSprite>]])
+    ---@diagnostic disable-next-line: param-type-mismatch
+    local sprites = transformIntoKahluaTable(spriteManager:getNamedMap())
 
     for name, sprite in pairs(sprites) do
         if sprite:getProperties():has(IsoFlagType.waterPiped) then
