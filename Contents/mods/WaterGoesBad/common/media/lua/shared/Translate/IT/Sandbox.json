@@ -1,0 +1,21 @@
+{
+    "Sandbox_WaterGoesBad": "Water Goes Bad (acqua stantia)",
+    "Sandbox_WaterGoesBad_ExpirationMin": "Giorni minimi prima che l'acqua vada a male",
+    "Sandbox_WaterGoesBad_ExpirationMin_tooltip": "In giorni, dopo quanti giorni minimi l'acqua può andare a male. Il conteggio inizia soltanto dopo la chiusura dell'acqua.",
+    "Sandbox_WaterGoesBad_ExpirationMax": "Numero massimo di giorni prima che l'acqua vada a male",
+    "Sandbox_WaterGoesBad_ExpirationMax_tooltip": "In giorni, dopo quanti giorni massimi l'acqua può andare a male. Il conteggio inizia soltanto dopo la chiusura dell'acqua.",
+    
+    "Sandbox_WaterGoesBad_NeedFilterWater": "I lavandini idraulici necessitano di filtri",
+    "Sandbox_WaterGoesBad_NeedFilterWater_tooltip": "I giocatori devono aggiungere filtri ai loro lavandini idraulici per pulire l'acqua. In caso contrario, l'acqua dei lavandini dotati di impianto idraulico è sempre sicura, anche se la fonte d'acqua non lo è (come in vanilla).",
+
+    "Sandbox_WaterGoesBad_ReduceWaterOverTime": "Scaricare l'acqua nel corso del tempo",
+    "Sandbox_WaterGoesBad_ReduceWaterOverTime_tooltip": "Dopo la chiusura dell'acqua, l'acqua verrà scaricata dai rubinetti.",
+    "Sandbox_WaterGoesBad_WaterReductionRate": "Tasso di scarico dell'acqua",
+    "Sandbox_WaterGoesBad_WaterReductionRate_tooltip": "Quanta acqua verrà prelevata dai rubinetti al giorno, in litri.",
+    "Sandbox_WaterGoesBad_WaterReductionChance": "Possibilità di scarico dell'acqua",
+    "Sandbox_WaterGoesBad_WaterReductionChance_tooltip": "Probabilità, al giorno, che l'acqua venga rimossa, aggiungendo varianza.",
+    "Sandbox_WaterGoesBad_MinimumWaterLeft": "Acqua minima rimanente",
+    "Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip": "Quantità di acqua, in litri, che non verrà eliminata dai rubinetti tramite scarico.",
+    "Sandbox_WaterGoesBad_ScaleWaterLoss": "Perdita proporzionale dell'acqua",
+    "Sandbox_WaterGoesBad_ScaleWaterLoss_tooltip": "I contenitori d'acqua più grandi, come quelli delle vasche da bagno, perdono acqua più velocemente dei lavandini."
+}
