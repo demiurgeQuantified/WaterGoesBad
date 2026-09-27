@@ -1,0 +1,3 @@
+Tooltip_FR = {
+    Tooltip_WaterGoesBad_TapFilter = "Se fixe sur les éviers raccordés pour purifier l'eau qui les traverse.",
+}

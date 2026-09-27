@@ -1,0 +1,18 @@
+Sandbox_FR = {
+    Sandbox_WaterGoesBad = "L'eau devient impropre",
+    Sandbox_WaterGoesBad_ExpirationMin = "Nombre minimum de jours avant que l'eau ne devienne impropre",
+    Sandbox_WaterGoesBad_ExpirationMin_tooltip = "Nombre de jours avant que l'eau puisse devenir impropre. Le décompte commence uniquement après la coupure d'eau.",
+    Sandbox_WaterGoesBad_ExpirationMax = "Nombre maximum de jours avant que l'eau ne devienne impropre",
+    Sandbox_WaterGoesBad_ExpirationMax_tooltip = "Nombre de jours avant que l'eau puisse devenir impropre au plus tard. Le décompte commence uniquement après la coupure d'eau.",
+
+    Sandbox_WaterGoesBad_NeedFilterWater = "Les éviers raccordés nécessitent des filtres",
+    Sandbox_WaterGoesBad_NeedFilterWater_tooltip = "Les joueurs doivent installer des filtres sur leurs éviers raccordés pour purifier l'eau. Sinon, l'eau des éviers raccordés reste toujours potable, même si leur source d'eau ne l'est pas, comme dans le jeu de base.",
+
+    Sandbox_WaterGoesBad_WaterReductionRate = "Débit d'écoulement de l'eau",
+    Sandbox_WaterGoesBad_WaterReductionRate_tooltip = "Quantité d'eau retirée de chaque robinet par jour, en proportion de sa capacité totale. Par exemple, avec une valeur de 0.2, un robinet perdra 20%% de sa capacité maximale chaque jour. Chaque robinet peut présenter une légère variation aléatoire autour de cette valeur. <LINE> Avec une valeur de 1, tous les robinets atteignent immédiatement leur niveau minimum lorsque l'eau est coupée. <LINE> Avec une valeur de 0, l'eau ne diminue pas.",
+    Sandbox_WaterGoesBad_MinimumWaterLeft = "Quantité minimale d'eau restante",
+    Sandbox_WaterGoesBad_MinimumWaterLeft_tooltip = "Proportion de la capacité totale du robinet qui ne sera jamais vidangée. Par exemple, avec une valeur de 0.2, un robinet ne descendra pas sous 20%% de sa capacité totale.",
+
+    Sandbox_WaterGoesBad_TapSizeScalar = "Multiplicateur de capacité des robinets",
+    Sandbox_WaterGoesBad_TapSizeScalar_tooltip = "Multiplie la capacité en eau des robinets. N'affecte pas les autres récipients contenant des liquides. <LINE> Modifier cette valeur en cours de partie ne change pas la capacité des robinets déjà chargés.",
+}
